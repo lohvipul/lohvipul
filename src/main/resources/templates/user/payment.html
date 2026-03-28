@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Online Payment</title>
+
+    <!-- Prevent browser caching -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <style>
+        body { background-color: #f8f9fa; }
+        .card { margin-top: 50px; border-radius: 15px; }
+        h4 { font-size: 1.6rem; color: #343a40; }
+        label { font-weight: 600; }
+        input.form-control { border: 2px solid black; font-size: 1.2rem; }
+        input[readonly] { background-color: #e9ecef; font-weight: bold; color: #495057; }
+        .btn-success { font-weight: 600; font-size: 1.1rem; }
+        #timer { font-size: 1.3rem; font-weight: 600; color: red; text-align: center; margin-bottom: 15px; }
+        .error-msg { color: red; font-size: 0.9rem; margin-top: 5px; }
+    </style>
+</head>
+<body>
+<section class="container d-flex flex-column" style="min-height: 80vh;">
+    <div class="row justify-content-center mt-auto mb-8">
+        <div class="col-md-8">
+            <div class="card shadow p-6">
+                <h4 class="text-center mb-2 fw-bold">Complete Your Payment</h4>
+
+                <!-- Timer Display -->
+                <div id="timer">Time left: 02:30</div>
+
+                <!-- Form -->
+                <form id="paymentForm" action="/user/payment/process" method="post" novalidate>
+                    <div class="mb-4">
+                        <label>Card Holder Name</label>
+                        <input type="text" name="cardHolderName" required class="form-control">
+                        <div id="cardHolderName-error" class="error-msg"></div>
+                    </div>
+                    <div class="mb-4">
+                        <label>Card Number</label>
+                        <input type="text" name="cardNumber" maxlength="16" required class="form-control">
+                        <div id="cardNumber-error" class="error-msg"></div>
+                    </div>
+                    <div class="row">
+                        <div class="col mb-3">
+                            <label>Expiry Month</label>
+                            <input type="text" name="expiryMonth" maxlength="2" required class="form-control">
+                            <div id="expiryMonth-error" class="error-msg"></div>
+                        </div>
+                        <div class="col mb-3">
+                            <label>Expiry Year</label>
+                            <input type="text" name="expiryYear" maxlength="4" required class="form-control">
+                            <div id="expiryYear-error" class="error-msg"></div>
+                        </div>
+                        <div class="col mb-3">
+                            <label>CVV</label>
+                            <input type="password" name="cvv" maxlength="3" required class="form-control">
+                            <div id="cvv-error" class="error-msg"></div>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label>Amount</label>
+                        <input type="text" name="amount" readonly th:value="${totalOrderPrice}" class="form-control">
+                    </div>
+                    <input type="hidden" name="orderId" th:value="${orderId}">
+                    <button type="submit" class="btn btn-success w-100">Pay Now</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- External JS -->
+<script src="/js/payment-timer.js"></script>
+<script src="/js/payment-validation.js"></script>
+</body>
+</html>
