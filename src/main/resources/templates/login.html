@@ -28,8 +28,20 @@
 
 							</div>
 
-							<div th:if="${param.logout}" class="alert alert-success">
-								Logout Sucessfully</div>
+							<div th:if="${showLogoutSuccess}" id="logoutSuccessAlert" class="alert alert-success text-center fade show" role="alert">
+								Logged out successfully.</div>
+							<th:block th:if="${showLogoutSuccess}">
+							<script>
+							document.addEventListener('DOMContentLoaded', function () {
+								var el = document.getElementById('logoutSuccessAlert');
+								if (!el) return;
+								setTimeout(function () {
+									el.classList.remove('show');
+									setTimeout(function () { el.remove(); }, 200);
+								}, 2500);
+							});
+							</script>
+							</th:block>
 						</div>
 						<div class="card-body">
 							<form action="/login" method="post">

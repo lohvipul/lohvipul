@@ -34,6 +34,7 @@ import com.example.demo.service.CartService;
 import com.example.demo.service.CategoryService;
 import com.example.demo.service.ProductService;
 import com.example.demo.service.UserService;
+import com.example.demo.util.AppConstant;
 import com.example.demo.util.CommonUtil;
 
 import ch.qos.logback.core.util.StringUtil;
@@ -80,7 +81,7 @@ public class HomeController {
 	}
 	
 	@GetMapping("/")
-	public String index(Model m) {
+	public String index(Model m, HttpSession session) {
 		List<Category> allActiveCategory = categoryService.getAllActiveCategory().stream()
 				.sorted((c1,c2)->c2.getId().compareTo(c1.getId()))
 				.limit(6).toList();
@@ -88,11 +89,19 @@ public class HomeController {
 				.sorted((p1,p2)->p2.getId().compareTo(p1.getId())).limit(8).toList();
 		m.addAttribute("category",allActiveCategory);
 		m.addAttribute("products",allActiveProducts);
+		if (Boolean.TRUE.equals(session.getAttribute(AppConstant.SESSION_FLASH_LOGIN_OK))) {
+			m.addAttribute("showLoginSuccess", true);
+			session.removeAttribute(AppConstant.SESSION_FLASH_LOGIN_OK);
+		}
 		return "index";
 	}
 	
 	@GetMapping("/signin")
-	public String login() {
+	public String login(HttpSession session, Model model) {
+		if (Boolean.TRUE.equals(session.getAttribute(AppConstant.SESSION_FLASH_LOGOUT))) {
+			model.addAttribute("showLogoutSuccess", true);
+			session.removeAttribute(AppConstant.SESSION_FLASH_LOGOUT);
+		}
 		return "login";
 	}
 	@GetMapping("/register")

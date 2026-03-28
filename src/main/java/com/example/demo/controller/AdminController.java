@@ -33,6 +33,7 @@ import com.example.demo.service.CategoryService;
 import com.example.demo.service.OrderService;
 import com.example.demo.service.ProductService;
 import com.example.demo.service.UserService;
+import com.example.demo.util.AppConstant;
 import com.example.demo.util.CommonUtil;
 import com.example.demo.util.OrderStatus;
 
@@ -81,7 +82,11 @@ public class AdminController {
 	}
 	
 	@GetMapping("/")
-	public String index() {
+	public String index(Model m, HttpSession session) {
+		if (Boolean.TRUE.equals(session.getAttribute(AppConstant.SESSION_FLASH_LOGIN_OK))) {
+			m.addAttribute("showLoginSuccess", true);
+			session.removeAttribute(AppConstant.SESSION_FLASH_LOGIN_OK);
+		}
 		return "admin/index";
 	}
 	

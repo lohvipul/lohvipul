@@ -7,6 +7,19 @@
 <body>
 	<section>
 	<div class="container p-5">
+	<div th:if="${showLoginSuccess}" id="loginSuccessAlert" class="alert alert-success text-center fade show" role="alert">Login successful.</div>
+	<th:block th:if="${showLoginSuccess}">
+	<script>
+	document.addEventListener('DOMContentLoaded', function () {
+		var el = document.getElementById('loginSuccessAlert');
+		if (!el) return;
+		setTimeout(function () {
+			el.classList.remove('show');
+			setTimeout(function () { el.remove(); }, 200);
+		}, 2500);
+	});
+	</script>
+	</th:block>
 	<p class="text-center fs-3 mt-4">Admin Dashbord</p>
 	<div class="row p-5" >
 	<div class="col-md-4 mt-3">

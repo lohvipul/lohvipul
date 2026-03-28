@@ -13,6 +13,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 
+import com.example.demo.util.AppConstant;
+
 
 @Configuration
 public class SecurityConfig {
@@ -59,7 +61,11 @@ public class SecurityConfig {
 						//.defaultSuccessUrl("/"))
 						.failureHandler(authenticationFailureHandler)
 				.successHandler(authenticationSuccessHandler))
-				.logout(logout->logout.permitAll());
+				.logout(logout -> logout.permitAll()
+						.logoutSuccessHandler((request, response, authentication) -> {
+							request.getSession().setAttribute(AppConstant.SESSION_FLASH_LOGOUT, Boolean.TRUE);
+							response.sendRedirect(request.getContextPath() + "/signin");
+						}));
 				
 		return http.build();
 	}

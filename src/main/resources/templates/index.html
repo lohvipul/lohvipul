@@ -6,6 +6,25 @@
 </head>
 <body>
 	<section>
+	<div th:if="${showLoginSuccess}" id="loginSuccessWrap" class="container mt-5 pt-3">
+		<div id="loginSuccessAlert" class="alert alert-success text-center fade show" role="alert">Login successful.</div>
+	</div>
+	<th:block th:if="${showLoginSuccess}">
+	<script>
+	document.addEventListener('DOMContentLoaded', function () {
+		var el = document.getElementById('loginSuccessAlert');
+		var wrap = document.getElementById('loginSuccessWrap');
+		if (!el) return;
+		setTimeout(function () {
+			el.classList.remove('show');
+			setTimeout(function () {
+				if (wrap) wrap.remove();
+				else el.remove();
+			}, 200);
+		}, 2500);
+	});
+	</script>
+	</th:block>
 	<!--  slider start  -->
 <div id="carouselExample" class="carousel slide">
   <div class="carousel-inner">
