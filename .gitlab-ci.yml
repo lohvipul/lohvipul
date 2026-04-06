@@ -1,9 +1,11 @@
+image: maven:3.9.6-eclipse-temurin-17
+
 stages:
   - build
   - deploy
 
 before_script:
-  - 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )'
+  - apt-get update -y && apt-get install -y openssh-client
   - eval $(ssh-agent -s)
   - echo "$SSH_PRIVATE_KEY" > key.pem
   - chmod 600 key.pem
@@ -14,17 +16,20 @@ before_script:
 build:
   stage: build
   script:
+    - chmod +x mvnw
     - ./mvnw clean install -DskipTests
 
 deploy:
   stage: deploy
   script:
-    - ssh ubuntu@65.2.149.240 "
-      cd /home/ubuntu/app || mkdir -p /home/ubuntu/app && cd /home/ubuntu/app &&
-      git clone https://gitlab.com/vipul-group2/shopping.git . || git pull &&
-      ./mvnw clean install &&
-      pkill -f java || true &&
+    - |
+      ssh ubuntu@65.2.149.240 << 'EOF'
+      cd /home/ubuntu/app || mkdir -p /home/ubuntu/app && cd /home/ubuntu/app
+      git clone https://gitlab.com/vipul-group2/shopping.git . || git pull
+      chmod +x mvnw
+      ./mvnw clean install
+      pkill -f java || true
       nohup java -jar target/*.jar > app.log 2>&1 &
-      "
+      EOF
   only:
     - main
