@@ -1,0 +1,28 @@
+stages:
+  - build
+  - test
+  - deploy
+
+variables:
+  MAVEN_OPTS: "-Dmaven.repo.local=.m2/repository"
+
+cache:
+  paths:
+    - .m2/repository
+
+build:
+  stage: build
+  script:
+    - ./mvnw clean install -DskipTests
+
+test:
+  stage: test
+  script:
+    - ./mvnw test
+
+deploy:
+  stage: deploy
+  script:
+    - echo "Deploy step (will configure later)"
+  only:
+    - main
