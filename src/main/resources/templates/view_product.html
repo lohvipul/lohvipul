@@ -29,7 +29,13 @@
 
 					<div class="col-md-6">
 
-						<p class="fs-3">[[${product.title}]]</p>
+						<div class="d-flex flex-wrap align-items-center gap-2 mb-2">
+							<p class="fs-3 mb-0">[[${product.title}]]</p>
+							<button type="button" class="btn btn-outline-secondary btn-sm" id="copyProductLink" title="Copy link to this product">
+								<i class="fa-solid fa-link"></i> Copy link
+							</button>
+							<span id="copyLinkFeedback" class="text-success small d-none">Copied!</span>
+						</div>
 						<p>
 							<span class="fw-bold">Description : </span><br>[[${product.description}]]
 						</p>
@@ -95,6 +101,26 @@
 			</div>
 		</div>
 
+		<script>
+		document.addEventListener('DOMContentLoaded', function () {
+			var btn = document.getElementById('copyProductLink');
+			if (!btn) return;
+			btn.addEventListener('click', function () {
+				var url = window.location.href;
+				var fb = document.getElementById('copyLinkFeedback');
+				function showFb() {
+					if (fb) { fb.classList.remove('d-none'); setTimeout(function () { fb.classList.add('d-none'); }, 2000); }
+				}
+				if (navigator.clipboard && navigator.clipboard.writeText) {
+					navigator.clipboard.writeText(url).then(showFb).catch(function () {
+						prompt('Copy this link:', url);
+					});
+				} else {
+					prompt('Copy this link:', url);
+				}
+			});
+		});
+		</script>
 
 	</section>
 </body>

@@ -19,6 +19,8 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
 
 	public Page<Product> findByIsActiveTrue(Pageable pageable);
 
+	Page<Product> findByIsActiveFalse(Pageable pageable);
+
 	public Page<Product> findByCategoryAndIsActiveTrue(Pageable pageable,String category);
 
 	public Page<Product> findByTitleContainingIgnoreCaseOrCategoryContainingIgnoreCase(String ch, String ch2,
@@ -26,7 +28,11 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
 
 	public Page<Product> findByIsActiveTrueAndTitleContainingIgnoreCaseOrCategoryContainingIgnoreCase(String ch1, String ch2, Pageable pageable);
 
-	
+	long countByIsActiveTrue();
+
+	long countByIsActiveFalse();
+
+	long countByIsActiveTrueAndStockLessThanEqual(int maxStock);
 
    /* @Query( "SELECT p from product p WHERE " +
             "LOWER(p.title) LIKE LOWER(CONCAT('%', :keyword, '%' )) OR "+

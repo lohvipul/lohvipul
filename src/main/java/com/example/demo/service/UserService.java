@@ -36,4 +36,6 @@ public interface UserService {
 	public UserDtls saveAdmin(UserDtls user);
 	
 	public boolean existsByEmail(String email);
+
+	long countUsersByRole(String role);
 }

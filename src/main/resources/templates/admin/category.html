@@ -8,6 +8,15 @@
 		<section>
 			<div class="container-fluid p-5 mt-5">
 			<div class="row">
+			<div class="col-12 mb-3" th:if="${catDashOrders != null}">
+				<div class="alert alert-info py-2 mb-0">
+					<strong>Store snapshot:</strong>
+					Total orders <span class="badge bg-dark">[[${catDashOrders}]]</span>
+					· Pending <span class="badge bg-warning text-dark">[[${catDashPending}]]</span>
+					· Customers <span class="badge bg-primary">[[${catDashCustomers}]]</span>
+					· Admins <span class="badge bg-danger">[[${catDashAdmins}]]</span>
+				</div>
+			</div>
 			<div class="col-md-3">
 			<div class="card card-sh">
 			<div class="card-header text-center">

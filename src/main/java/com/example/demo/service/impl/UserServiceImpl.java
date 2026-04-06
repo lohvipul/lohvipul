@@ -244,6 +244,11 @@ public UserDtls updateUserProfile(UserDtls user, MultipartFile img) {
 	    return userRepository.existsByEmail(email);
 	}
 
+	@Override
+	public long countUsersByRole(String role) {
+		return userRepository.countByRole(role);
+	}
+
 	
 	
 	

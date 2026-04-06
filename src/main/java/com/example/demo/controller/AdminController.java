@@ -2,6 +2,8 @@ package com.example.demo.controller;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -15,6 +17,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -24,12 +27,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.thymeleaf.util.ObjectUtils;
 
+import com.example.demo.dto.DashboardStats;
 import com.example.demo.model.Category;
 import com.example.demo.model.Product;
 import com.example.demo.model.ProductOrder;
 import com.example.demo.model.UserDtls;
 import com.example.demo.service.CartService;
 import com.example.demo.service.CategoryService;
+import com.example.demo.service.DashboardService;
 import com.example.demo.service.OrderService;
 import com.example.demo.service.ProductService;
 import com.example.demo.service.UserService;
@@ -63,6 +68,9 @@ public class AdminController {
 	
 	@Autowired
 	private PasswordEncoder passwordEncoder;
+
+	@Autowired
+	private DashboardService dashboardService;
 	
 	@ModelAttribute
 	public void getUserDetails(Principal p,Model m) {
@@ -87,6 +95,29 @@ public class AdminController {
 			m.addAttribute("showLoginSuccess", true);
 			session.removeAttribute(AppConstant.SESSION_FLASH_LOGIN_OK);
 		}
+		DashboardStats stats = dashboardService.getAdminDashboardStats();
+		m.addAttribute("stats", stats);
+
+		Integer lastSeenOrderId = (Integer) session.getAttribute(AppConstant.DASH_LAST_MAX_ORDER_ID);
+		long newOrderLines = orderService.countOrdersWithIdGreaterThan(lastSeenOrderId);
+		Integer snapPending = (Integer) session.getAttribute(AppConstant.DASH_PENDING_SNAPSHOT);
+		long pending = stats.pendingOrders();
+		boolean pendingNeedsAttention = snapPending == null ? pending > 0 : pending > snapPending;
+
+		int orderBadge = 0;
+		boolean orderBadgeRed = false;
+		if (pendingNeedsAttention) {
+			orderBadgeRed = true;
+			orderBadge = (int) Math.min(pending, 999);
+		} else if (newOrderLines > 0) {
+			orderBadge = (int) Math.min(newOrderLines, 999);
+		}
+		m.addAttribute("dashOrderBadgeRed", Boolean.valueOf(orderBadgeRed));
+		m.addAttribute("dashOrderBadgeShow", Boolean.valueOf(orderBadge > 0));
+		m.addAttribute("dashOrderBadgeLabel", orderBadge > 99 ? "99+" : String.valueOf(orderBadge));
+		m.addAttribute("dashOrderBigBorderClass",
+				orderBadgeRed ? "border border-danger border-2" : (orderBadge > 0 ? "border border-primary border-2" : ""));
+
 		return "admin/index";
 	}
 	
@@ -114,7 +145,12 @@ public class AdminController {
 		m.addAttribute("totalPages",page.getTotalPages());
 		m.addAttribute("isFirst",page.isFirst());
 		m.addAttribute("isLast",page.isLast());
-		
+
+		DashboardStats catDash = dashboardService.getAdminDashboardStats();
+		m.addAttribute("catDashOrders", catDash.totalOrders());
+		m.addAttribute("catDashPending", catDash.pendingOrders());
+		m.addAttribute("catDashCustomers", catDash.customerUsers());
+		m.addAttribute("catDashAdmins", catDash.adminUsers());
 		
 		return "admin/category";
 	}
@@ -355,32 +391,47 @@ public class AdminController {
 	}
 
 	@GetMapping("/products")
-	public String loadViewProduct(Model m,@RequestParam(defaultValue = "") String ch,@RequestParam(name="pageNo",defaultValue = "0")Integer pageNo
-			,@RequestParam(name="pageSize",defaultValue = "4") Integer pageSize) {
-//		List<Product> products =null;
-//		if(ch!=null & ch.length()>0) {
-//			products=productService.searchProduct(ch);
-//		}else {
-//			products=productService.getAllProducts();
-//		}
-//		m.addAttribute("products",products);
-		
-		Page<Product> page =null;
-		if(ch!=null & ch.length()>0) {
-			page=productService.searchProductPagination(pageNo, pageSize, ch);
-		}else {
-			page=productService.getAllProductsPagination(pageNo,pageSize);
+	public String loadViewProduct(Model m, @RequestParam(defaultValue = "") String ch,
+			@RequestParam(name = "pageNo", defaultValue = "0") Integer pageNo,
+			@RequestParam(name = "pageSize", defaultValue = "4") Integer pageSize,
+			@RequestParam(required = false) Boolean active) {
+
+		Page<Product> page;
+		if (StringUtils.hasText(ch)) {
+			page = productService.searchProductPagination(pageNo, pageSize, ch);
+		} else {
+			page = productService.getAdminProductsPagination(pageNo, pageSize, active);
 		}
-		m.addAttribute("products",page.getContent());
-		
-		m.addAttribute("pageNo",page.getNumber());
-		m.addAttribute("pageSize",pageSize);
-		m.addAttribute("totalElements",page.getTotalElements());
-		m.addAttribute("totalPages",page.getTotalPages());
-		m.addAttribute("isFirst",page.isFirst());
-		m.addAttribute("isLast",page.isLast());
-		
-		
+		m.addAttribute("products", page.getContent());
+
+		m.addAttribute("pageNo", page.getNumber());
+		m.addAttribute("pageSize", pageSize);
+		m.addAttribute("totalElements", page.getTotalElements());
+		m.addAttribute("totalPages", page.getTotalPages());
+		m.addAttribute("isFirst", page.isFirst());
+		m.addAttribute("isLast", page.isLast());
+		m.addAttribute("filterActive", active);
+		m.addAttribute("searchCh", ch);
+
+		StringBuilder q = new StringBuilder();
+		if (active != null) {
+			q.append("&active=").append(active);
+		}
+		if (StringUtils.hasText(ch)) {
+			q.append("&ch=").append(URLEncoder.encode(ch, StandardCharsets.UTF_8));
+		}
+		m.addAttribute("productsQuerySuffix", q.toString());
+
+		String label;
+		if (Boolean.TRUE.equals(active)) {
+			label = "Active products only";
+		} else if (Boolean.FALSE.equals(active)) {
+			label = "Inactive products only";
+		} else {
+			label = "All products";
+		}
+		m.addAttribute("productFilterLabel", label);
+
 		return "admin/products";
 	}
 	
@@ -422,7 +473,12 @@ public class AdminController {
 	}
 	
 	@GetMapping("/users")
-	public String getAllUser(Model m,@RequestParam Integer type) {
+	public String getAllUser(Model m,@RequestParam Integer type, HttpSession session) {
+		if (type == 1) {
+			session.setAttribute(AppConstant.DASH_SNAP_CUSTOMER_COUNT, (int) userService.countUsersByRole("ROLE_USER"));
+		} else {
+			session.setAttribute(AppConstant.DASH_SNAP_ADMIN_COUNT, (int) userService.countUsersByRole("ROLE_ADMIN"));
+		}
 		List<UserDtls> users=null;
 		if(type==1) {
 			users=userService.getUser("ROLE_USER");
@@ -459,7 +515,12 @@ public class AdminController {
 	public String getAllOrders(Model m,
 	    @RequestParam(defaultValue = "") String ch,
 	    @RequestParam(name = "pageNo", defaultValue = "0") Integer pageNo,
-	    @RequestParam(name = "pageSize", defaultValue = "5") Integer pageSize) {
+	    @RequestParam(name = "pageSize", defaultValue = "5") Integer pageSize,
+	    HttpSession session) {
+
+		DashboardStats st = dashboardService.getAdminDashboardStats();
+		session.setAttribute(AppConstant.DASH_LAST_MAX_ORDER_ID, orderService.findMaxOrderId());
+		session.setAttribute(AppConstant.DASH_PENDING_SNAPSHOT, (int) st.pendingOrders());
 
 	    List<ProductOrder> allOrders = orderService.getAllOrders();
 

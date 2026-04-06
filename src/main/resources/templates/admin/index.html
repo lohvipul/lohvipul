@@ -6,7 +6,7 @@
 </head>
 <body>
 	<section>
-	<div class="container p-5">
+	<div class="container p-5 pt-5 admin-dashboard-page">
 	<div th:if="${showLoginSuccess}" id="loginSuccessAlert" class="alert alert-success text-center fade show" role="alert">Login successful.</div>
 	<th:block th:if="${showLoginSuccess}">
 	<script>
@@ -20,86 +20,111 @@
 	});
 	</script>
 	</th:block>
-	<p class="text-center fs-3 mt-4">Admin Dashbord</p>
-	<div class="row p-5" >
-	<div class="col-md-4 mt-3">
-	<a href="/admin/loadAddProduct" class="text-decoration-none"> 
-		<div class="card card-sh">
-			<div class="card-body text-center text-primary ">
-				<i class="fa-solid fa-square-plus fa-3x"></i>
-			<h4>Add Product</h4>
+	<div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3 mt-4">
+		<p class="text-center fs-3 mb-0 flex-grow-1">Admin Dashboard</p>
+		<small class="text-muted admin-dash-clock text-nowrap" id="adminDashClock" aria-live="polite"></small>
+	</div>
+	<div class="row g-4 px-1 pb-5">
+		<div class="col-md-4">
+			<div class="card card-sh h-100 shadow-sm position-relative admin-dash-tile">
+				<div class="card-body text-center text-primary py-4">
+					<i class="fa-solid fa-square-plus fa-3x" aria-hidden="true"></i>
+					<h4 class="mt-2 mb-0">Add Product</h4>
+				</div>
+				<a th:href="@{/admin/loadAddProduct}" class="stretched-link admin-dash-tile-link" aria-label="Add Product"></a>
 			</div>
 		</div>
-		</a>
-	</div>
-	
-	<div class="col-md-4 mt-3">
-	<a href="/admin/category" class="text-decoration-none"> 
-		<div class="card card-sh">
-			<div class="card-body text-center text-warning">
-				<i class="fa-solid fa-list fa-3x"></i>
-			<h4>Add Categary</h4>
+		<div class="col-md-4">
+			<div class="card card-sh h-100 shadow-sm position-relative admin-dash-tile">
+				<div class="card-body text-center text-warning py-4">
+					<i class="fa-solid fa-list fa-3x" aria-hidden="true"></i>
+					<h4 class="mt-2 mb-0">Add Category</h4>
+				</div>
+				<a th:href="@{/admin/category}" class="stretched-link admin-dash-tile-link" aria-label="Add Category"></a>
 			</div>
 		</div>
-		</a>
-	</div>
-	
-	<div class="col-md-4 mt-3">
-	<a href="/admin/products" class="text-decoration-none"> 
-		<div class="card card-sh">
-			<div class="card-body text-center text-success ">
-				<i class="fa-solid fa-table-list fa-3x"></i>
-			<h4>View Product</h4>
+		<div class="col-md-4">
+			<div class="card card-sh h-100 shadow-sm admin-dash-tile">
+				<div class="card-body text-center text-success py-3" th:if="${stats != null}">
+					<i class="fa-solid fa-table-list fa-3x" aria-hidden="true"></i>
+					<h4 class="mt-2 mb-0">View Product</h4>
+					<div class="d-grid gap-2 mt-3 px-2">
+						<a th:href="@{/admin/products(active=true)}" class="btn btn-sm btn-success text-white position-relative admin-dash-btn-z">
+							Active <span class="badge bg-light text-success ms-1" th:text="|+${stats.activeProducts}|">+0</span>
+						</a>
+						<a th:href="@{/admin/products(active=false)}" class="btn btn-sm btn-secondary position-relative admin-dash-btn-z">
+							Inactive <span class="badge bg-light text-dark ms-1" th:text="|+${stats.inactiveProducts}|">+0</span>
+						</a>
+					</div>
+				</div>
 			</div>
 		</div>
-		</a>
-	</div>
-	
-	<div class="col-md-4 mt-3">
-	<a href="/admin/orders" class="text-decoration-none"> 
-		<div class="card card-sh">
-			<div class="card-body text-center text-warning ">
-				<i class="fa-solid fa-box-open fa-3x"></i>
-			<h4>Orders</h4>
+		<div class="col-md-4">
+			<div class="card card-sh h-100 shadow-sm position-relative admin-dash-tile"
+				th:classappend="${dashOrderBigBorderClass}">
+				<div class="card-body text-center text-warning py-4 position-relative">
+					<span th:if="${dashOrderBadgeShow}"
+						class="admin-order-badge-lg badge rounded-pill fs-6 px-2 py-1 text-white"
+						th:classappend="${dashOrderBadgeRed} ? 'bg-danger admin-badge-pending-pulse' : 'bg-primary'"
+						th:text="|+${dashOrderBadgeLabel}|">+2</span>
+					<i class="fa-solid fa-box-open fa-3x" aria-hidden="true"></i>
+					<h4 class="mt-2 mb-0">Orders</h4>
+				</div>
+				<a th:href="@{/admin/orders}" class="stretched-link admin-dash-tile-link" aria-label="Orders"></a>
 			</div>
 		</div>
-		</a>
-	</div>
-	
-	<div class="col-md-4 mt-3">
-	<a href="/admin/users?type=1" class="text-decoration-none"> 
-		<div class="card card-sh">
-			<div class="card-body text-center text-primary ">
-			<i class="fa-solid fa-circle-user fa-3x"></i>
-			<h4>Users</h4>
+		<div class="col-md-4">
+			<div class="card card-sh h-100 shadow-sm admin-dash-tile">
+				<div class="card-body text-center text-primary py-3" th:if="${stats != null}">
+					<i class="fa-solid fa-circle-user fa-3x" aria-hidden="true"></i>
+					<h4 class="mt-2 mb-0">Users</h4>
+					<div class="d-grid gap-2 mt-3 px-2">
+						<a th:href="@{'/admin/users?type=1'}" class="btn btn-sm btn-primary text-white position-relative admin-dash-btn-z">
+							Customers <span class="badge bg-light text-primary ms-1" th:text="|+${stats.customerUsers}|">+0</span>
+						</a>
+					</div>
+				</div>
 			</div>
 		</div>
-		</a>
-	</div>
-	
-	<div class="col-md-4  mt-3">
-	<a href="/admin/add-admin" class="text-decoration-none"> 
-		<div class="card card-sh">
-			<div class="card-body text-center text-primary ">
-				<i class="fa-solid fa-user-plus fa-3x" ></i>
-			<h4>Add Admin</h4>
+		<div class="col-md-4">
+			<div class="card card-sh h-100 shadow-sm position-relative admin-dash-tile">
+				<div class="card-body text-center text-primary py-4">
+					<i class="fa-solid fa-user-plus fa-3x" aria-hidden="true"></i>
+					<h4 class="mt-2 mb-0">Add Admin</h4>
+				</div>
+				<a th:href="@{/admin/add-admin}" class="stretched-link admin-dash-tile-link" aria-label="Add Admin"></a>
 			</div>
 		</div>
-		</a>
-	</div>
-	
-	<div class="col-md-4 mt-3">
-	<a href="/admin/users?type=2" class="text-decoration-none"> 
-		<div class="card card-sh">
-			<div class="card-body text-center text-primary ">
-			<i class="fa-solid fa-circle-user fa-3x"></i>
-			<h4>Admin</h4>
+		<div class="col-md-4">
+			<div class="card card-sh h-100 shadow-sm admin-dash-tile">
+				<div class="card-body text-center text-danger py-3" th:if="${stats != null}">
+					<i class="fa-solid fa-circle-user fa-3x" aria-hidden="true"></i>
+					<h4 class="mt-2 mb-0">Admin</h4>
+					<div class="d-grid gap-2 mt-3 px-2">
+						<a th:href="@{'/admin/users?type=2'}" class="btn btn-sm btn-danger text-white position-relative admin-dash-btn-z">
+							Admins <span class="badge bg-light text-danger ms-1" th:text="|+${stats.adminUsers}|">+0</span>
+						</a>
+					</div>
+				</div>
 			</div>
 		</div>
-		</a>
 	</div>
 	</div>
-	</div>
+	<script>
+	(function () {
+		function tick() {
+			var el = document.getElementById('adminDashClock');
+			if (!el) return;
+			var d = new Date();
+			el.textContent = d.toLocaleString(undefined, {
+				weekday: 'short', year: 'numeric', month: 'short', day: 'numeric',
+				hour: '2-digit', minute: '2-digit', second: '2-digit'
+			});
+		}
+		tick();
+		setInterval(tick, 1000);
+	})();
+	</script>
 	</section>
 </body>
 </html>

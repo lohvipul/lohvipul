@@ -10,6 +10,8 @@ public interface UserRepository extends JpaRepository<UserDtls, Integer> {
 		public UserDtls  findByEmail(String email);
 		
 		public List<UserDtls> findByRole(String role);
+
+		long countByRole(String role);
 		
 		public UserDtls findByResetToken(String resetToken);
 		

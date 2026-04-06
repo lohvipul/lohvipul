@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -134,6 +135,25 @@ public class OrderServiceImpl implements OrderService {
 		ProductOrder findByOrderId= orderRepository.findByOrderId(orderId);
 		
 		return findByOrderId;
+	}
+
+	@Override
+	public int findMaxOrderId() {
+		return orderRepository.findMaxOrderId();
+	}
+
+	@Override
+	public long countOrdersWithIdGreaterThan(Integer lastSeenId) {
+		if (lastSeenId == null) {
+			return orderRepository.count();
+		}
+		return orderRepository.countByIdGreaterThan(lastSeenId);
+	}
+
+	@Override
+	public List<ProductOrder> getRecentOrdersForDashboard(int limit) {
+		Pageable p = PageRequest.of(0, Math.max(1, limit), Sort.by(Sort.Direction.DESC, "id"));
+		return orderRepository.findAll(p).getContent();
 	}
     
    

@@ -47,6 +47,18 @@ public class ProductServiceImpl implements ProductService {
 	}
 
 	@Override
+	public Page<Product> getAdminProductsPagination(Integer pageNo, Integer pageSize, Boolean active) {
+		Pageable pageable = PageRequest.of(pageNo, pageSize);
+		if (Boolean.TRUE.equals(active)) {
+			return productRepository.findByIsActiveTrue(pageable);
+		}
+		if (Boolean.FALSE.equals(active)) {
+			return productRepository.findByIsActiveFalse(pageable);
+		}
+		return productRepository.findAll(pageable);
+	}
+
+	@Override
 	public Boolean deleteProduct(Integer id) {
 		Product product = productRepository.findById(id).orElse(null);
 

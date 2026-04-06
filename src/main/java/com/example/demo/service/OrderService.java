@@ -19,5 +19,11 @@ public interface OrderService {
 	public ProductOrder getOrdersById(String orderId);
 	
 	public Page<ProductOrder> getAllOrdersPagination(Integer pageNo,Integer pageSize);
+
+	int findMaxOrderId();
+
+	long countOrdersWithIdGreaterThan(Integer lastSeenId);
+
+	List<ProductOrder> getRecentOrdersForDashboard(int limit);
 	
 }

@@ -31,5 +31,8 @@ public interface ProductService {
 
 	public Page<Product> getAllProductsPagination(Integer pageNo,Integer pageSize);
 
+	/** null = all products; true/false = active / inactive only */
+	Page<Product> getAdminProductsPagination(Integer pageNo, Integer pageSize, Boolean active);
+
 	public Page<Product> searchActiveProductPagination(Integer pageNo, Integer pageSize,String category, String ch);
 }
