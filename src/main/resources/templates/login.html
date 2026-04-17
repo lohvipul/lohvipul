@@ -1,76 +1,126 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="~{base::layout(~{::section})}">
 <head>
-<meta charset="UTF-8">
-<title>Insert title here</title>
+	<meta charset="UTF-8">
+	<title>Login - Arbuda</title>
 </head>
 <body>
-		<section>
-		
-		<div class="container mt-5 p-5">
-			<div class="row">
-				<div class="col-md-6 p-5">
-					<img alt="" src="img/ecom.png" width="100%" height="400px">
+	<section class="py-5">
+		<div class="container">
+			<div class="row g-5 align-items-center">
+				<!-- Left Side - Image -->
+				<div class="col-lg-6 d-none d-lg-block">
+					<img alt="Shopping" src="/img/ecom.png" class="img-fluid rounded-lg shadow-lg" style="max-height: 500px; object-fit: cover;">
 				</div>
-				<div class="col-md-6 mt-3 p-5">
-					<div class="card shadow p-3 mb-5 bg-body-tertiary rounded">
-						<div class="card-header">
-							<p class="fs-4 text-center">Login</p>
-							<div th:if="${param.error}"
-								class="alert alert-danger text-center">
 
-								<th:block
-									th:if="${session.SPRING_SECURITY_LAST_EXCEPTION!=null}">
-									[[${session.SPRING_SECURITY_LAST_EXCEPTION.message}]]
-								</th:block>
-
-
-
+				<!-- Right Side - Login Form -->
+				<div class="col-lg-6">
+					<div class="card border-0 shadow-lg">
+						<!-- Header -->
+						<div class="card-body p-5">
+							<!-- Heading -->
+							<div class="text-center mb-5">
+								<h2 class="display-6 fw-bold mb-2">Welcome Back</h2>
+								<p class="text-muted">Sign in to your Arbuda account</p>
 							</div>
 
-							<div th:if="${showLogoutSuccess}" id="logoutSuccessAlert" class="alert alert-success text-center fade show" role="alert">
-								Logged out successfully.</div>
+							<!-- Logout Success Alert -->
 							<th:block th:if="${showLogoutSuccess}">
-							<script>
-							document.addEventListener('DOMContentLoaded', function () {
-								var el = document.getElementById('logoutSuccessAlert');
-								if (!el) return;
-								setTimeout(function () {
-									el.classList.remove('show');
-									setTimeout(function () { el.remove(); }, 200);
-								}, 2500);
-							});
-							</script>
+								<div id="logoutSuccessAlert" class="alert alert-success d-flex align-items-center gap-3 mb-4 fade show" role="alert">
+									<i class="fas fa-check-circle fs-5"></i>
+									<div>You have been logged out successfully.</div>
+									<button type="button" class="btn-close ms-auto" data-bs-dismiss="alert" aria-label="Close"></button>
+								</div>
+								<script>
+								document.addEventListener('DOMContentLoaded', function () {
+									var el = document.getElementById('logoutSuccessAlert');
+									if (!el) return;
+									setTimeout(function () {
+										el.classList.remove('show');
+										setTimeout(function () { el.remove(); }, 200);
+									}, 3000);
+								});
+								</script>
 							</th:block>
-						</div>
-						<div class="card-body">
-							<form action="/login" method="post">
-								<div class="mb-3">
-									<label class="form-label">Email</label> <input required
-										class="form-control" name="username" type="email">
+
+							<!-- Login Error Alert -->
+							<th:block th:if="${param.error}">
+								<div class="alert alert-danger d-flex align-items-center gap-3 mb-4 fade show" role="alert">
+									<i class="fas fa-exclamation-circle fs-5"></i>
+									<div>
+										<strong>Login Failed!</strong>
+										<th:block th:if="${session.SPRING_SECURITY_LAST_EXCEPTION!=null}">
+											<br>[[${session.SPRING_SECURITY_LAST_EXCEPTION.message}]]
+										</th:block>
+									</div>
+									<button type="button" class="btn-close ms-auto" data-bs-dismiss="alert" aria-label="Close"></button>
+								</div>
+							</th:block>
+
+							<!-- Login Form -->
+							<form action="/login" method="post" novalidate>
+								<!-- Email Input -->
+								<div class="mb-4">
+									<label class="form-label fw-bold" for="username">Email Address</label>
+									<input type="email" id="username" name="username" required 
+										   class="form-control form-control-lg border-1"
+										   placeholder="Enter your email">
+									<small class="text-muted d-block mt-2">
+										<i class="fas fa-info-circle me-1"></i>We'll never share your email
+									</small>
 								</div>
 
-								<div class="mb-3">
-									<label class="form-label">Password</label> <input required
-										class="form-control" name="password" type="password">
+								<!-- Password Input -->
+								<div class="mb-4">
+									<label class="form-label fw-bold" for="password">Password</label>
+									<input type="password" id="password" name="password" required 
+										   class="form-control form-control-lg border-1"
+										   placeholder="Enter your password">
 								</div>
-								<button type="submit"
-									class="btn bg-primary text-white col-md-12">Login</button>
+
+								<!-- Remember Me & Forgot Password -->
+								<div class="d-flex justify-content-between align-items-center mb-4">
+									<div class="form-check">
+										<input class="form-check-input" type="checkbox" id="rememberMe">
+										<label class="form-check-label" for="rememberMe">Remember me</label>
+									</div>
+									<a href="/forgot-password" class="text-primary fw-bold text-decoration-none">
+										Forgot Password?
+									</a>
+								</div>
+
+								<!-- Submit Button -->
+								<button type="submit" class="btn btn-primary btn-lg w-100 fw-bold btn-hover-lift mb-3">
+									<i class="fas fa-sign-in-alt me-2"></i>Sign In
+								</button>
 							</form>
-						</div>
 
-						<div class="card-footer text-center">
-							<a href="forgot-password" class="text-decoration-none">Forgot Password</a><br>
-							Don't have an account ? <a href="/register" class="text-decoration-none">Create
-								one </a>
+							<!-- Divider -->
+							<div class="d-flex align-items-center gap-3 my-4">
+								<div class="flex-grow-1 border-top"></div>
+								<span class="text-muted small">New to Arbuda?</span>
+								<div class="flex-grow-1 border-top"></div>
+							</div>
+
+							<!-- Register Link -->
+							<a href="/register" class="btn btn-outline-primary btn-lg w-100 fw-bold">
+								<i class="fas fa-user-plus me-2"></i>Create New Account
+							</a>
+
+							<!-- Footer Links -->
+							<div class="text-center mt-4">
+								<small class="text-muted">
+									By signing in, you agree to our
+									<a href="#" class="text-primary text-decoration-none">Terms of Service</a>
+									and
+									<a href="#" class="text-primary text-decoration-none">Privacy Policy</a>
+								</small>
+							</div>
 						</div>
 					</div>
 				</div>
 			</div>
 		</div>
-
-		</section>
-	
-		
+	</section>
 </body>
 </html>

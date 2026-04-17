@@ -1,80 +1,132 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="~{base::layout(~{::section})}">
 <head>
     <meta charset="UTF-8">
-    <title>Online Payment</title>
+    <title>Secure Payment - Arbuda</title>
 
     <!-- Prevent browser caching -->
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
     <meta http-equiv="Pragma" content="no-cache" />
     <meta http-equiv="Expires" content="0" />
-
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
-    <style>
-        body { background-color: #f8f9fa; }
-        .card { margin-top: 50px; border-radius: 15px; }
-        h4 { font-size: 1.6rem; color: #343a40; }
-        label { font-weight: 600; }
-        input.form-control { border: 2px solid black; font-size: 1.2rem; }
-        input[readonly] { background-color: #e9ecef; font-weight: bold; color: #495057; }
-        .btn-success { font-weight: 600; font-size: 1.1rem; }
-        #timer { font-size: 1.3rem; font-weight: 600; color: red; text-align: center; margin-bottom: 15px; }
-        .error-msg { color: red; font-size: 0.9rem; margin-top: 5px; }
-    </style>
 </head>
 <body>
-<section class="container d-flex flex-column" style="min-height: 80vh;">
-    <div class="row justify-content-center mt-auto mb-8">
-        <div class="col-md-8">
-            <div class="card shadow p-6">
-                <h4 class="text-center mb-2 fw-bold">Complete Your Payment</h4>
+	<section class="py-5">
+		<div class="container">
+			<div class="row justify-content-center">
+				<div class="col-lg-6">
+					<!-- Payment Card -->
+					<div class="card border-0 shadow-lg">
+						<!-- Header -->
+						<div class="card-header bg-primary text-white p-4">
+							<h4 class="fw-bold mb-0">
+								<i class="fas fa-lock me-2"></i>Secure Payment
+							</h4>
+						</div>
 
-                <!-- Timer Display -->
-                <div id="timer">Time left: 02:30</div>
+						<!-- Body -->
+						<div class="card-body p-5">
+							<!-- Timer Display -->
+							<div id="timer" class="alert alert-warning d-flex align-items-center gap-2 mb-4">
+								<i class="fas fa-hourglass-end"></i>
+								<span class="fw-bold mb-0">Time left: <span id="timerValue">02:30</span></span>
+							</div>
 
-                <!-- Form -->
-                <form id="paymentForm" action="/user/payment/process" method="post" novalidate>
-                    <div class="mb-4">
-                        <label>Card Holder Name</label>
-                        <input type="text" name="cardHolderName" required class="form-control">
-                        <div id="cardHolderName-error" class="error-msg"></div>
-                    </div>
-                    <div class="mb-4">
-                        <label>Card Number</label>
-                        <input type="text" name="cardNumber" maxlength="16" required class="form-control">
-                        <div id="cardNumber-error" class="error-msg"></div>
-                    </div>
-                    <div class="row">
-                        <div class="col mb-3">
-                            <label>Expiry Month</label>
-                            <input type="text" name="expiryMonth" maxlength="2" required class="form-control">
-                            <div id="expiryMonth-error" class="error-msg"></div>
-                        </div>
-                        <div class="col mb-3">
-                            <label>Expiry Year</label>
-                            <input type="text" name="expiryYear" maxlength="4" required class="form-control">
-                            <div id="expiryYear-error" class="error-msg"></div>
-                        </div>
-                        <div class="col mb-3">
-                            <label>CVV</label>
-                            <input type="password" name="cvv" maxlength="3" required class="form-control">
-                            <div id="cvv-error" class="error-msg"></div>
-                        </div>
-                    </div>
-                    <div class="mb-3">
-                        <label>Amount</label>
-                        <input type="text" name="amount" readonly th:value="${totalOrderPrice}" class="form-control">
-                    </div>
-                    <input type="hidden" name="orderId" th:value="${orderId}">
-                    <button type="submit" class="btn btn-success w-100">Pay Now</button>
-                </form>
-            </div>
-        </div>
-    </div>
-</section>
+							<!-- Order Info -->
+							<div class="bg-light p-3 rounded-3 mb-4">
+								<div class="d-flex justify-content-between mb-2">
+									<span class="text-muted">Order ID</span>
+									<span class="fw-bold">[[${orderId}]]</span>
+								</div>
+								<div class="d-flex justify-content-between">
+									<span class="text-muted">Amount</span>
+									<span class="h5 fw-bold text-primary mb-0">₹[[${totalOrderPrice}]]</span>
+								</div>
+							</div>
 
-<!-- External JS -->
-<script src="/js/payment-timer.js"></script>
-<script src="/js/payment-validation.js"></script>
+							<!-- Payment Form -->
+							<form id="paymentForm" action="/user/payment/process" method="post" novalidate>
+								<!-- Card Holder Name -->
+								<div class="mb-4">
+									<label class="form-label fw-bold" for="cardHolderName">Card Holder Name</label>
+									<input type="text" id="cardHolderName" name="cardHolderName" required 
+										   class="form-control form-control-lg border-1">
+									<div id="cardHolderName-error" class="invalid-feedback d-block mt-2 text-danger small"></div>
+								</div>
+
+								<!-- Card Number -->
+								<div class="mb-4">
+									<label class="form-label fw-bold" for="cardNumber">Card Number</label>
+									<input type="text" id="cardNumber" name="cardNumber" maxlength="16" required 
+										   class="form-control form-control-lg border-1 font-monospace"
+										   placeholder="1234 5678 9012 3456">
+									<div id="cardNumber-error" class="invalid-feedback d-block mt-2 text-danger small"></div>
+									<small class="text-muted d-block mt-2">
+										<i class="fas fa-info-circle me-1"></i>16 digits without spaces
+									</small>
+								</div>
+
+								<!-- Expiry & CVV Row -->
+								<div class="row g-3 mb-4">
+									<div class="col-md-6">
+										<label class="form-label fw-bold" for="expiryMonth">Expiry Month</label>
+										<input type="text" id="expiryMonth" name="expiryMonth" maxlength="2" required 
+											   class="form-control form-control-lg border-1 font-monospace"
+											   placeholder="MM">
+										<div id="expiryMonth-error" class="invalid-feedback d-block mt-2 text-danger small"></div>
+									</div>
+									<div class="col-md-6">
+										<label class="form-label fw-bold" for="expiryYear">Expiry Year</label>
+										<input type="text" id="expiryYear" name="expiryYear" maxlength="4" required 
+											   class="form-control form-control-lg border-1 font-monospace"
+											   placeholder="YYYY">
+										<div id="expiryYear-error" class="invalid-feedback d-block mt-2 text-danger small"></div>
+									</div>
+									<div class="col-md-12">
+										<label class="form-label fw-bold" for="cvv">CVV (Security Code)</label>
+										<input type="password" id="cvv" name="cvv" maxlength="3" required 
+											   class="form-control form-control-lg border-1 font-monospace"
+											   placeholder="123">
+										<div id="cvv-error" class="invalid-feedback d-block mt-2 text-danger small"></div>
+									</div>
+								</div>
+
+								<!-- Hidden Fields -->
+								<input type="hidden" name="amount" th:value="${totalOrderPrice}">
+								<input type="hidden" name="orderId" th:value="${orderId}">
+
+								<!-- Payment Button -->
+								<button type="submit" class="btn btn-primary btn-lg w-100 fw-bold btn-hover-lift">
+									<i class="fas fa-check-circle me-2"></i>Pay ₹[[${totalOrderPrice}]] Now
+								</button>
+							</form>
+
+							<!-- Security Info -->
+							<div class="mt-4 pt-4 border-top text-center">
+								<p class="text-muted small mb-3">
+									<i class="fas fa-shield-alt text-success me-1"></i><strong>SSL Secure</strong> - Your payment information is encrypted
+								</p>
+								<div class="d-flex justify-content-center gap-3 small text-muted">
+									<span><i class="fas fa-lock me-1"></i>Secure Checkout</span>
+									<span><i class="fas fa-credit-card me-1"></i>Safe Payment</span>
+									<span><i class="fas fa-check-circle me-1 text-success"></i>Trusted</span>
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<!-- Back to Cart Link -->
+					<div class="text-center mt-4">
+						<a href="/user/cart" class="text-muted text-decoration-none fw-bold">
+							<i class="fas fa-arrow-left me-2"></i>Back to Cart
+						</a>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<!-- External JS -->
+	<script src="/js/payment-timer.js"></script>
+	<script src="/js/payment-validation.js"></script>
 </body>
 </html>

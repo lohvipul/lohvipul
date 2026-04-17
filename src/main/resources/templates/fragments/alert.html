@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+</head>
+<body>
+	<!-- Success Alert -->
+	<th:block th:fragment="alert-success(message, dismissible)">
+		<div class="alert alert-success alert-dismissible fade show d-flex align-items-center gap-3" role="alert" th:classappend="${dismissible} ? 'alert-dismissible' : ''">
+			<i class="fas fa-check-circle"></i>
+			<div>[[${message}]]</div>
+			<th:block th:if="${dismissible}">
+				<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+			</th:block>
+		</div>
+	</th:block>
+
+	<!-- Error Alert -->
+	<th:block th:fragment="alert-error(message, dismissible)">
+		<div class="alert alert-danger alert-dismissible fade show d-flex align-items-center gap-3" role="alert" th:classappend="${dismissible} ? 'alert-dismissible' : ''">
+			<i class="fas fa-exclamation-circle"></i>
+			<div>[[${message}]]</div>
+			<th:block th:if="${dismissible}">
+				<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+			</th:block>
+		</div>
+	</th:block>
+
+	<!-- Warning Alert -->
+	<th:block th:fragment="alert-warning(message, dismissible)">
+		<div class="alert alert-warning alert-dismissible fade show d-flex align-items-center gap-3" role="alert" th:classappend="${dismissible} ? 'alert-dismissible' : ''">
+			<i class="fas fa-exclamation-triangle"></i>
+			<div>[[${message}]]</div>
+			<th:block th:if="${dismissible}">
+				<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+			</th:block>
+		</div>
+	</th:block>
+
+	<!-- Info Alert -->
+	<th:block th:fragment="alert-info(message, dismissible)">
+		<div class="alert alert-info alert-dismissible fade show d-flex align-items-center gap-3" role="alert" th:classappend="${dismissible} ? 'alert-dismissible' : ''">
+			<i class="fas fa-info-circle"></i>
+			<div>[[${message}]]</div>
+			<th:block th:if="${dismissible}">
+				<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+			</th:block>
+		</div>
+	</th:block>
+</body>
+</html>

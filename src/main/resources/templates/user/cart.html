@@ -2,79 +2,164 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org" 
 th:replace="~{base::layout(~{::section})}">
 <head>
-<meta charset="UTF-8">
-<title>Insert title here</title>
+	<meta charset="UTF-8">
+	<title>Shopping Cart - Arbuda</title>
 </head>
 <body>
-	<section>
-		<div class="container-fluid mt-5 p-5">
-		
-			<div class="card card-sh">
-		<div class="card-header text-center">
-		<p class="fs-4"> Cart page</p>
-		<th:block th:if="${session.succMsg}">
-				<p class="text-success fw-bold">[[${session.succMsg}]]</p>
+	<section class="py-5">
+		<div class="container">
+			<!-- Page Header -->
+			<div class="mb-5">
+				<h1 class="display-5 fw-bold mb-2">Shopping Cart</h1>
+				<p class="text-muted">Review and manage your items before checkout</p>
+			</div>
+
+			<!-- Success/Error Messages -->
+			<th:block th:if="${session.succMsg}">
+				<div class="alert alert-success d-flex align-items-center gap-3 mb-4 fade show" role="alert">
+					<i class="fas fa-check-circle fs-5"></i>
+					<div>[[${session.succMsg}]]</div>
+					<button type="button" class="btn-close ms-auto" data-bs-dismiss="alert" aria-label="Close"></button>
+				</div>
 				<th:block th:text="${@commonServiceImpl.removeSessionMessage()}"></th:block>
 			</th:block>
 			
 			<th:block th:if="${session.errorMsg}">
-			<p class="text-danger fw-bold">[[${session.errorMsg}]]</p>
-			<th:block th:text="${@commonServiceImpl.removeSessionMessage()}"></th:block>
+				<div class="alert alert-danger d-flex align-items-center gap-3 mb-4 fade show" role="alert">
+					<i class="fas fa-exclamation-circle fs-5"></i>
+					<div>[[${session.errorMsg}]]</div>
+					<button type="button" class="btn-close ms-auto" data-bs-dismiss="alert" aria-label="Close"></button>
+				</div>
+				<th:block th:text="${@commonServiceImpl.removeSessionMessage()}"></th:block>
+			</th:block>
+
+			<!-- Cart Content -->
+			<th:block th:if="${#lists.isEmpty(carts)}">
+				<!-- Empty Cart -->
+				<div class="text-center py-5">
+					<i class="fas fa-shopping-cart fa-5x text-muted mb-3 d-block"></i>
+					<h4 class="text-muted fw-bold">Your cart is empty</h4>
+					<p class="text-muted mb-4">Start shopping to add items to your cart</p>
+					<a href="/products" class="btn btn-primary btn-lg">
+						<i class="fas fa-shopping-bags me-2"></i>Continue Shopping
+					</a>
+				</div>
+			</th:block>
+
+			<th:block th:unless="${#lists.isEmpty(carts)}">
+				<div class="row g-4">
+					<!-- Cart Items Table -->
+					<div class="col-lg-8">
+						<div class="card border-0 shadow-sm">
+							<div class="table-responsive">
+								<table class="table table-hover mb-0">
+									<thead class="bg-light border-bottom">
+										<tr>
+											<th scope="col" class="py-3">Product</th>
+											<th scope="col" class="py-3 text-center">Price</th>
+											<th scope="col" class="py-3 text-center">Quantity</th>
+											<th scope="col" class="py-3 text-end">Total</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr th:each="cart,c:${carts}">
+											<!-- Product Info -->
+											<td class="py-4">
+												<div class="d-flex gap-3">
+													<img th:src="@{'/product_img/'+${cart.product.image}}" 
+														 width="80px" height="80px" style="object-fit: cover; border-radius: 8px;"
+														 th:alt="${cart.product.title}">
+													<div class="flex-grow-1">
+														<h6 class="fw-bold mb-1">[[${cart.product.title}]]</h6>
+														<small class="text-muted">[[${cart.product.category.name}]]</small>
+													</div>
+												</div>
+											</td>
+											<!-- Price -->
+											<td class="py-4 text-center">
+												<span class="fw-bold">₹[[${cart.product.discountPrice}]]</span>
+											</td>
+											<!-- Quantity -->
+											<td class="py-4">
+												<div class="d-flex justify-content-center align-items-center gap-2">
+													<a th:href="@{'/user/cartQuantityUpdate?sy=de&cid='+${cart.id}}" 
+														class="btn btn-sm btn-outline-secondary px-2">
+														<i class="fas fa-minus"></i>
+													</a>
+													<span class="fw-bold" style="min-width: 30px; text-align: center;">[[${cart.quantity}]]</span>
+													<a th:href="@{'/user/cartQuantityUpdate?sy=in&cid='+${cart.id}}" 
+														class="btn btn-sm btn-outline-secondary px-2">
+														<i class="fas fa-plus"></i>
+													</a>
+												</div>
+											</td>
+											<!-- Total Price -->
+											<td class="py-4 text-end">
+												<span class="fw-bold h6 mb-0">₹[[${cart.totalPrice}]]</span>
+											</td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+						</div>
+
+						<!-- Continue Shopping Button -->
+						<div class="mt-4">
+							<a href="/products" class="btn btn-outline-primary fw-bold">
+								<i class="fas fa-arrow-left me-2"></i>Continue Shopping
+							</a>
+						</div>
+					</div>
+
+					<!-- Order Summary -->
+					<div class="col-lg-4">
+						<div class="card border-0 shadow-sm sticky-lg-top" style="top: 100px;">
+							<div class="card-header bg-light border-0">
+								<h5 class="fw-bold mb-0">
+									<i class="fas fa-receipt me-2"></i>Order Summary
+								</h5>
+							</div>
+							<div class="card-body">
+								<!-- Subtotal -->
+								<div class="d-flex justify-content-between mb-3">
+									<span class="text-muted">Subtotal</span>
+									<span class="fw-bold">₹[[${totalOrderPrice}]]</span>
+								</div>
+
+								<!-- Shipping -->
+								<div class="d-flex justify-content-between mb-3 pb-3 border-bottom">
+									<span class="text-muted">
+										<i class="fas fa-truck me-1"></i>Shipping
+									</span>
+									<span class="badge bg-success">FREE</span>
+								</div>
+
+								<!-- Total -->
+								<div class="d-flex justify-content-between mb-4">
+									<span class="h5 fw-bold">Total Amount</span>
+									<span class="h5 fw-bold text-primary">₹[[${totalOrderPrice}]]</span>
+								</div>
+
+								<!-- Checkout Button -->
+								<a href="/user/orders" class="btn btn-primary btn-lg w-100 fw-bold btn-hover-lift">
+									<i class="fas fa-lock me-2"></i>Proceed to Checkout
+								</a>
+
+								<!-- Trust Badges -->
+								<div class="mt-4 pt-4 border-top text-center">
+									<small class="text-muted d-block mb-2">
+										<i class="fas fa-shield-alt me-1 text-success"></i>Secure Checkout
+									</small>
+									<small class="text-muted d-block">
+										<i class="fas fa-check-circle me-1 text-success"></i>Trusted by Thousands
+									</small>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
 			</th:block>
 		</div>
-		<div class="card-body">
-			<table class="table">
-  <thead>
-    <tr>
-      <th scope="col">Sl No</th>
-      <th scope="col">Image</th>
-      <th scope="col">Product Name</th>
-      <th scope="col">Price</th>
-      <th scope="col" class="text-center">Quantity</th>
-      <th scope="col">Total Price</th>
-      
-     
-    </tr>
-  </thead>
-  <tbody>
-    <tr th:each="cart,c:${carts}">
-      <th scope="row">[[${c.count}]]</th>
-      <td><img th:src="@{'/product_img/'+${cart.product.image}}" width="60px" height="70px"></td>
-      <td>[[${cart.product.title}]]</td>
-      
-      <td>[[${cart.product.discountPrice}]]</td>
-       <td class="text-center"><a th:href="@{'/user/cartQuantityUpdate?sy=de&cid='+${cart.id}}">
-        <i class="fa-solid fa-minus"></i></a>  [ [[${cart.quantity}]]  ] 
-        
-        <a th:href="@{'/user/cartQuantityUpdate?sy=in&cid='+${cart.id}}">
-        <i class="fa-solid fa-plus"></i></a></td>
-       <td>[[${cart.totalPrice}]]</td>
-        
-      <td>
-      
-    </tr>
-    <tr> 
-    <td colspan="4"></td>
-    <td class="fw-bold">Total Price</td>
-    <td class="fw-bold">&#8377; [[${totalOrderPrice}]]</td>
-    </tr>
-  
-  
-  </tbody>
-</table>
-<div class="text-center mt-4">
-    <th:block th:if="${#lists.isEmpty(carts)}">
-        <button class="btn btn-secondary" disabled>Cart is Empty</button>
-    </th:block>
-    
-    <th:block th:unless="${#lists.isEmpty(carts)}">
-        <a href="/user/orders" class="btn btn-warning">Proceed To Payment</a>
-    </th:block>
-</div>
-
-		</div>
-		</div>
-		
 	</section>
 </body>
 </html>
