@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+</head>
+<body>
+	<!-- Modern Footer Fragment -->
+	<th:block th:fragment="footer">
+		<footer class="mt-5 pt-5 border-top" style="background-color: #f8f9fa;">
+			<div class="container py-5">
+				<div class="row g-4 mb-5">
+					<!-- Company Info -->
+					<div class="col-md-4">
+						<h5 class="fw-bold mb-3" style="color: #0d6efd;">
+							<i class="fas fa-shopping-bag me-2"></i>Arbuda
+						</h5>
+						<p class="text-muted lh-lg">Your one-stop online shop for everything you need. Quality products, fast delivery, and exceptional customer support.</p>
+						<div class="d-flex gap-2 mt-3">
+							<a href="#" class="btn btn-sm btn-outline-primary rounded-circle d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+								<i class="fab fa-facebook-f"></i>
+							</a>
+							<a href="#" class="btn btn-sm btn-outline-primary rounded-circle d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+								<i class="fab fa-twitter"></i>
+							</a>
+							<a href="#" class="btn btn-sm btn-outline-primary rounded-circle d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+								<i class="fab fa-instagram"></i>
+							</a>
+							<a href="#" class="btn btn-sm btn-outline-primary rounded-circle d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+								<i class="fab fa-linkedin-in"></i>
+							</a>
+						</div>
+					</div>
+
+					<!-- Quick Links -->
+					<div class="col-md-2">
+						<h6 class="fw-bold mb-3">Quick Links</h6>
+						<ul class="list-unstyled">
+							<li class="mb-2">
+								<a href="/" class="text-muted text-decoration-none hover-link">
+									<i class="fas fa-chevron-right me-2" style="width: 12px;"></i>Home
+								</a>
+							</li>
+							<li class="mb-2">
+								<a href="/products" class="text-muted text-decoration-none hover-link">
+									<i class="fas fa-chevron-right me-2" style="width: 12px;"></i>Shop
+								</a>
+							</li>
+							<li class="mb-2">
+								<a href="#" class="text-muted text-decoration-none hover-link">
+									<i class="fas fa-chevron-right me-2" style="width: 12px;"></i>About Us
+								</a>
+							</li>
+							<li class="mb-2">
+								<a href="#" class="text-muted text-decoration-none hover-link">
+									<i class="fas fa-chevron-right me-2" style="width: 12px;"></i>Contact
+								</a>
+							</li>
+						</ul>
+					</div>
+
+					<!-- Customer Service -->
+					<div class="col-md-2">
+						<h6 class="fw-bold mb-3">Support</h6>
+						<ul class="list-unstyled">
+							<li class="mb-2">
+								<a href="#" class="text-muted text-decoration-none hover-link">
+									<i class="fas fa-chevron-right me-2" style="width: 12px;"></i>FAQ
+								</a>
+							</li>
+							<li class="mb-2">
+								<a href="#" class="text-muted text-decoration-none hover-link">
+									<i class="fas fa-chevron-right me-2" style="width: 12px;"></i>Shipping
+								</a>
+							</li>
+							<li class="mb-2">
+								<a href="#" class="text-muted text-decoration-none hover-link">
+									<i class="fas fa-chevron-right me-2" style="width: 12px;"></i>Returns
+								</a>
+							</li>
+							<li class="mb-2">
+								<a href="#" class="text-muted text-decoration-none hover-link">
+									<i class="fas fa-chevron-right me-2" style="width: 12px;"></i>Support Center
+								</a>
+							</li>
+						</ul>
+					</div>
+
+					<!-- Newsletter -->
+					<div class="col-md-4">
+						<h6 class="fw-bold mb-3">Newsletter</h6>
+						<p class="text-muted small mb-3">Subscribe to get special offers and updates delivered to your inbox.</p>
+						<form class="d-flex gap-2 mb-3">
+							<input type="email" class="form-control" placeholder="Enter your email" required>
+							<button class="btn btn-primary btn-sm fw-bold px-3" type="submit">
+								<i class="fas fa-paper-plane me-1"></i>Subscribe
+							</button>
+						</form>
+					</div>
+				</div>
+
+				<hr class="my-4">
+
+				<!-- Bottom Footer -->
+				<div class="row align-items-center">
+					<div class="col-md-6">
+						<p class="text-muted small mb-0">&copy; 2025 Arbuda.com. All rights reserved.</p>
+					</div>
+					<div class="col-md-6 text-md-end">
+						<a href="#" class="text-muted text-decoration-none small me-3">Privacy Policy</a>
+						<a href="#" class="text-muted text-decoration-none small me-3">Terms of Service</a>
+						<a href="#" class="text-muted text-decoration-none small">Cookie Settings</a>
+					</div>
+				</div>
+			</div>
+		</footer>
+	</th:block>
+</body>
+</html>

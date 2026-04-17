@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+</head>
+<body>
+	<!-- Primary Button -->
+	<th:block th:fragment="btn-primary(url, text, icon)">
+		<a th:href="${url}" class="btn btn-primary fw-bold py-2 px-4 btn-hover-lift">
+			<i th:if="${icon}" th:class="|fas fa-${icon} me-2|"></i>[[${text}]]
+		</a>
+	</th:block>
+
+	<!-- Secondary Button -->
+	<th:block th:fragment="btn-secondary(url, text, icon)">
+		<a th:href="${url}" class="btn btn-outline-primary fw-bold py-2 px-4 btn-hover-lift">
+			<i th:if="${icon}" th:class="|fas fa-${icon} me-2|"></i>[[${text}]]
+		</a>
+	</th:block>
+
+	<!-- Danger Button -->
+	<th:block th:fragment="btn-danger(url, text, icon)">
+		<a th:href="${url}" class="btn btn-danger fw-bold py-2 px-4 btn-hover-lift">
+			<i th:if="${icon}" th:class="|fas fa-${icon} me-2|"></i>[[${text}]]
+		</a>
+	</th:block>
+
+	<!-- Success Button -->
+	<th:block th:fragment="btn-success(url, text, icon)">
+		<a th:href="${url}" class="btn btn-success fw-bold py-2 px-4 btn-hover-lift">
+			<i th:if="${icon}" th:class="|fas fa-${icon} me-2|"></i>[[${text}]]
+		</a>
+	</th:block>
+
+	<!-- Small Button -->
+	<th:block th:fragment="btn-sm(url, text, icon)">
+		<a th:href="${url}" class="btn btn-sm btn-primary fw-bold btn-hover-lift">
+			<i th:if="${icon}" th:class="|fas fa-${icon} me-1|"></i>[[${text}]]
+		</a>
+	</th:block>
+</body>
+</html>

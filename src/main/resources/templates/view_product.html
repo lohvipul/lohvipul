@@ -2,105 +2,195 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org"
 	th:replace="~{base::layout(~{::section})}">
 <head>
-<meta charset="ISO-8859-1">
-<title>Insert title here</title>
+	<meta charset="UTF-8">
+	<title>[[${product.title}]] - Arbuda</title>
 </head>
 <body>
-	<section>
-		<div class="container card-sh"
-			style="margin-top: 70px; margin-bottom: 100px">
+	<section class="py-5">
+		<div class="container">
+			<!-- Success/Error Messages -->
+			<th:block th:if="${session.succMsg}">
+				<div class="alert alert-success d-flex align-items-center gap-3 mb-4 fade show" role="alert">
+					<i class="fas fa-check-circle fs-5"></i>
+					<div>[[${session.succMsg}]]</div>
+					<button type="button" class="btn-close ms-auto" data-bs-dismiss="alert" aria-label="Close"></button>
+				</div>
+				<th:block th:text="${@commonServiceImpl.removeSessionMessage()}"></th:block>
+			</th:block>
 
-			<div class="col-md-12 p-5">
-				<div class="row">
-					<th:block th:if="${session.succMsg}">
-						<p class="text-success alert alert-success text-center" role="alert">[[${session.succMsg}]]</p>
-						<th:block th:text="${@commonServiceImpl.removeSessionMessage()}"></th:block>
-					</th:block>
+			<th:block th:if="${session.errorMsg}">
+				<div class="alert alert-danger d-flex align-items-center gap-3 mb-4 fade show" role="alert">
+					<i class="fas fa-exclamation-circle fs-5"></i>
+					<div>[[${session.errorMsg}]]</div>
+					<button type="button" class="btn-close ms-auto" data-bs-dismiss="alert" aria-label="Close"></button>
+				</div>
+				<th:block th:text="${@commonServiceImpl.removeSessionMessage()}"></th:block>
+			</th:block>
 
-					<th:block th:if="${session.errorMsg}">
-						<p class="text-danger text-center  alert alert-danger">[[${session.errorMsg}]]</p>
-						<th:block th:text="${@commonServiceImpl.removeSessionMessage()}"></th:block>
+			<!-- Breadcrumb -->
+			<nav aria-label="breadcrumb" class="mb-4">
+				<ol class="breadcrumb">
+					<li class="breadcrumb-item"><a href="/" class="text-decoration-none">Home</a></li>
+					<li class="breadcrumb-item"><a href="/products" class="text-decoration-none">Products</a></li>
+					<li class="breadcrumb-item active" aria-current="page">[[${product.title}]]</li>
+				</ol>
+			</nav>
 
-					</th:block>
-					<div class="col-md-6 text-end">
-						<img alt="" th:src="@{'/product_img/'+${product.image}}" width="300px"
-							height="250px">
+			<!-- Product Detail -->
+			<div class="row g-5">
+				<!-- Product Image -->
+				<div class="col-lg-5">
+					<div class="card border-0 shadow-sm overflow-hidden" style="position: sticky; top: 80px;">
+						<div style="height: 400px; overflow: hidden; background-color: #f0f0f0;" class="position-relative d-flex align-items-center justify-content-center">
+							<img th:src="@{'/product_img/'+${product.image}}" alt="[[${product.title}]]" 
+								 style="max-width: 100%; max-height: 100%; object-fit: contain;">
+						</div>
+						<div class="card-body text-center bg-primary bg-opacity-5">
+							<small class="text-muted">
+								<i class="fas fa-image me-1"></i>Zoom available on hover
+							</small>
+						</div>
+					</div>
+				</div>
+
+				<!-- Product Info -->
+				<div class="col-lg-7">
+					<!-- Title & Share -->
+					<div class="mb-4">
+						<h1 class="display-6 fw-bold mb-3">[[${product.title}]]</h1>
+						<div class="d-flex gap-2 align-items-center">
+							<button type="button" class="btn btn-outline-primary btn-sm fw-bold" id="copyProductLink" title="Copy link to this product">
+								<i class="fas fa-share-alt me-1"></i>Share
+							</button>
+							<span id="copyLinkFeedback" class="text-success small d-none fw-bold">
+								<i class="fas fa-check me-1"></i>Copied to clipboard!
+							</span>
+						</div>
 					</div>
 
-					<div class="col-md-6">
-
-						<div class="d-flex flex-wrap align-items-center gap-2 mb-2">
-							<p class="fs-3 mb-0">[[${product.title}]]</p>
-							<button type="button" class="btn btn-outline-secondary btn-sm" id="copyProductLink" title="Copy link to this product">
-								<i class="fa-solid fa-link"></i> Copy link
-							</button>
-							<span id="copyLinkFeedback" class="text-success small d-none">Copied!</span>
+					<!-- Rating & Reviews (Placeholder) -->
+					<div class="mb-4">
+						<div class="d-flex align-items-center gap-2">
+							<div class="text-warning">
+								<i class="fas fa-star"></i>
+								<i class="fas fa-star"></i>
+								<i class="fas fa-star"></i>
+								<i class="fas fa-star"></i>
+								<i class="fas fa-star-half"></i>
+							</div>
+							<small class="text-muted">(156 reviews)</small>
 						</div>
-						<p>
-							<span class="fw-bold">Description : </span><br>[[${product.description}]]
-						</p>
-						<p>
-							<span class="fw-bold"> Product Details: </span> <br> Status
-							:
-							<th:block th:if="${product.stock>0}">
-								<span class="badge bg-success">Available</span>
-							</th:block>
+					</div>
 
-							<th:block th:unless="${product.stock>0}">
-								<span class="badge bg-warning">out of stock</span>
-							</th:block>
-
-
-							<br> Category: [[${product.category}]]<br> Policy : 7
-							Days Replacement & Return
-						</p>
-						<p class="fs-5 fw-bold">
-							Price :&nbsp; &nbsp; &nbsp; &nbsp;<i class="fas fa-rupee-sign"></i>
-							[[${product.discountPrice}]] <span
-								class="fs-6 text-decoration-line-through text-secondary">[[${product.price}]]</span>
-							<span class="fs-6  text-success">[[${product.discount}]]%
-								off</span>
-						</p>
-
-						<div class="row">
-							<div class="col-md-4 text-success text-center p-2">
-								<i class="fas fa-money-bill-wave fa-2x"></i>
-								<p>Cash On Delivery</p>
+					<!-- Price Section -->
+					<div class="card border-0 bg-primary bg-opacity-5 mb-4">
+						<div class="card-body">
+							<div class="d-flex align-items-baseline gap-3 mb-2">
+								<h2 class="mb-0 text-primary fw-bold">₹[[${product.discountPrice}]]</h2>
+								<span class="text-decoration-line-through text-muted h5">₹[[${product.price}]]</span>
+								<span class="badge bg-danger fs-6">[[${product.discount}]]% off</span>
 							</div>
-							<div class="col-md-4 text-danger text-center p-2">
-								<i class="fas fa-undo-alt fa-2x"></i>
-								<p>Return Available</p>
-							</div>
-							<div class="col-md-4 text-primary text-center p-2">
-								<i class="fas fa-truck-moving fa-2x"></i>
-								<p>Free Shipping</p>
+							<small class="text-muted">Inclusive of all taxes</small>
+						</div>
+					</div>
+
+					<!-- Stock Status -->
+					<div class="mb-4">
+						<p class="mb-2 fw-bold">Availability</p>
+						<th:block th:if="${product.stock>0}">
+							<span class="badge bg-success fs-6 px-3 py-2">
+								<i class="fas fa-check-circle me-1"></i>In Stock
+							</span>
+						</th:block>
+						<th:block th:unless="${product.stock>0}">
+							<span class="badge bg-danger fs-6 px-3 py-2">
+								<i class="fas fa-times-circle me-1"></i>Out of Stock
+							</span>
+						</th:block>
+					</div>
+
+					<!-- Description -->
+					<div class="mb-4">
+						<h5 class="fw-bold mb-2">Description</h5>
+						<p class="text-muted lh-lg">[[${product.description}]]</p>
+					</div>
+
+					<!-- Product Details -->
+					<div class="card border-0 bg-light mb-4">
+						<div class="card-body">
+							<h5 class="card-title fw-bold mb-3">Product Details</h5>
+							<ul class="list-unstyled">
+								<li class="mb-2">
+									<strong>Category:</strong> 
+									<span class="badge bg-secondary">[[${product.category}]]</span>
+								</li>
+								<li class="mb-2">
+									<strong>Policy:</strong> 7 Days Replacement & Return
+								</li>
+								<li>
+									<strong>Warranty:</strong> Manufacturer&apos;s Warranty
+								</li>
+							</ul>
+						</div>
+					</div>
+
+					<!-- Features & Services -->
+					<div class="row g-3 mb-4">
+						<div class="col-md-4 text-center">
+							<div class="card border-0 h-100">
+								<div class="card-body">
+									<i class="fas fa-credit-card text-success fa-2x mb-2 d-block"></i>
+									<small class="fw-bold">Cash on Delivery</small>
+								</div>
 							</div>
 						</div>
+						<div class="col-md-4 text-center">
+							<div class="card border-0 h-100">
+								<div class="card-body">
+									<i class="fas fa-undo text-danger fa-2x mb-2 d-block"></i>
+									<small class="fw-bold">Easy Returns</small>
+								</div>
+							</div>
+						</div>
+						<div class="col-md-4 text-center">
+							<div class="card border-0 h-100">
+								<div class="card-body">
+									<i class="fas fa-truck text-primary fa-2x mb-2 d-block"></i>
+									<small class="fw-bold">Free Shipping</small>
+								</div>
+							</div>
+						</div>
+					</div>
 
+					<!-- Add to Cart -->
+					<div class="d-grid gap-2">
 						<th:block th:if="${product.stock>0}">
 							<th:block th:if="${user==null}">
-								<a href="/signin" class="btn btn-danger col-md-12">Add To
-									Cart</a>
+								<a href="/signin" class="btn btn-danger btn-lg fw-bold btn-hover-lift">
+									<i class="fas fa-shopping-cart me-2"></i>Add to Cart
+								</a>
+								<small class="text-center text-muted">Sign in to add to cart</small>
 							</th:block>
 
 							<th:block th:unless="${user==null}">
-								<a
-									th:href="@{'/user/addCart?pid='+${product.id}+'&uid='+${user.id}}"
-									class="btn btn-danger col-md-12">Add To Cart</a>
+								<a th:href="@{'/user/addCart?pid='+${product.id}+'&uid='+${user.id}}" 
+									class="btn btn-danger btn-lg fw-bold btn-hover-lift">
+									<i class="fas fa-shopping-cart me-2"></i>Add to Cart
+								</a>
 							</th:block>
-
 						</th:block>
 
 						<th:block th:unless="${product.stock>0}">
-							<a href="#" class="btn text-white btn-warning col-md-12">Out
-								of Stock</a>
+							<button class="btn btn-secondary btn-lg fw-bold" disabled>
+								<i class="fas fa-times-circle me-2"></i>Out of Stock
+							</button>
 						</th:block>
-
 					</div>
 				</div>
 			</div>
 		</div>
 
+		<!-- Copy Link Script -->
 		<script>
 		document.addEventListener('DOMContentLoaded', function () {
 			var btn = document.getElementById('copyProductLink');
@@ -109,7 +199,10 @@
 				var url = window.location.href;
 				var fb = document.getElementById('copyLinkFeedback');
 				function showFb() {
-					if (fb) { fb.classList.remove('d-none'); setTimeout(function () { fb.classList.add('d-none'); }, 2000); }
+					if (fb) { 
+						fb.classList.remove('d-none'); 
+						setTimeout(function () { fb.classList.add('d-none'); }, 2500); 
+					}
 				}
 				if (navigator.clipboard && navigator.clipboard.writeText) {
 					navigator.clipboard.writeText(url).then(showFb).catch(function () {
@@ -121,7 +214,6 @@
 			});
 		});
 		</script>
-
 	</section>
 </body>
 </html>

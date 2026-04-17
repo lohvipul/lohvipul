@@ -2,121 +2,158 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org" 
 th:replace="~{base::layout(~{::section})}">
 <head>
-<meta charset="UTF-8">
-<title>Insert title here</title>
+	<meta charset="UTF-8">
+	<title>Manage Products - Arbuda Admin</title>
 </head>
 <body>
-	<section>
-		<div class="container-fluid mt-1 p-5">
-	<div class="row">	<p class="text-center fs-3 mt-2">All Products</p>
-			<div class="col-12" th:if="${productFilterLabel != null}">
-				<div class="alert alert-secondary py-2 mb-2 d-flex flex-wrap justify-content-between align-items-center gap-2">
-					<span><strong>Filter:</strong> [[${productFilterLabel}]]</span>
-					<a th:href="@{/admin/products}" class="btn btn-sm btn-outline-dark" th:if="${filterActive != null}">Show all products</a>
+	<section class="py-5">
+		<div class="container-fluid">
+			<!-- Header -->
+			<div class="mb-5">
+				<div class="d-flex justify-content-between align-items-center mb-4">
+					<div>
+						<a href="/admin/" class="btn btn-outline-secondary fw-bold mb-3">
+							<i class="fas fa-arrow-left me-2"></i>Back to Dashboard
+						</a>
+						<h1 class="display-6 fw-bold">Manage Products</h1>
+						<p class="text-muted">View and manage all products in your catalog</p>
+					</div>
+					<a href="/admin/loadAddProduct" class="btn btn-primary btn-lg fw-bold btn-hover-lift">
+						<i class="fas fa-plus-circle me-2"></i>Add New Product
+					</a>
 				</div>
 			</div>
-			<hr>
-			<a href="/admin/" class="text-decoration-none">
-			<i class="fa-solid fa-arrow-left"></i> 	Back</a>
-			<th:block th:if="${session.succMsg}">
-								<p class="text-success fw-bold text-center">[[${session.succMsg}]]</p>
-								<th:block th:text="${@commonServiceImpl.removeSessionMessage()}"></th:block>
-							</th:block>
 
-							<th:block th:if="${session.succMsg}">
-				<p class="text-success fw-bold">[[${session.succMsg}]]</p>
+			<!-- Filter Alert -->
+			<div th:if="${productFilterLabel != null}" class="alert alert-info d-flex justify-content-between align-items-center mb-4">
+				<div>
+					<i class="fas fa-filter me-2"></i>
+					<strong>Active Filter:</strong> [[${productFilterLabel}]]
+				</div>
+				<a th:href="@{/admin/products}" class="btn btn-sm btn-outline-info fw-bold">
+					<i class="fas fa-times me-1"></i>Clear Filter
+				</a>
+			</div>
+
+			<!-- Success/Error Messages -->
+			<th:block th:if="${session.succMsg}">
+				<div class="alert alert-success d-flex align-items-center gap-3 mb-4 fade show" role="alert">
+					<i class="fas fa-check-circle fs-5"></i>
+					<div>[[${session.succMsg}]]</div>
+					<button type="button" class="btn-close ms-auto" data-bs-dismiss="alert" aria-label="Close"></button>
+				</div>
 				<th:block th:text="${@commonServiceImpl.removeSessionMessage()}"></th:block>
 			</th:block>
-			
+
 			<th:block th:if="${session.errorMsg}">
-			<p class="text-danger fw-bold">[[${session.errorMsg}]]</p>
-			<th:block th:text="${@commonServiceImpl.removeSessionMessage()}"></th:block>
+				<div class="alert alert-danger d-flex align-items-center gap-3 mb-4 fade show" role="alert">
+					<i class="fas fa-exclamation-circle fs-5"></i>
+					<div>[[${session.errorMsg}]]</div>
+					<button type="button" class="btn-close ms-auto" data-bs-dismiss="alert" aria-label="Close"></button>
+				</div>
+				<th:block th:text="${@commonServiceImpl.removeSessionMessage()}"></th:block>
 			</th:block>
-							<div class="col-md-4 p-4">
-					<form action="/admin/products" method="get">
-					<input type="hidden" name="active" th:if="${filterActive != null}" th:value="${filterActive}">
-					<div class="row">
-					<div class="col">
-					<input type="text" class="form-control" name="ch" th:value="${searchCh}" placeholder="Search title/category"></div>
-					<div class="col">
-					<button class="btn btn-primary">Search</button>
-					</div>
-					</div>
+
+			<!-- Search Bar -->
+			<div class="card border-0 shadow-sm mb-4">
+				<div class="card-body p-4">
+					<form action="/admin/products" method="get" class="d-flex gap-2">
+						<input type="hidden" name="active" th:if="${filterActive != null}" th:value="${filterActive}">
+						<input type="text" class="form-control form-control-lg" name="ch" th:value="${searchCh}" 
+							   placeholder="Search by title or category...">
+						<button class="btn btn-primary fw-bold" type="submit">
+							<i class="fas fa-search me-2"></i>Search
+						</button>
 					</form>
-					</div>
-				
-			<div class="card card-sh">
-		<div class="card-body">
-			<table class="table table-bordered">
-  <thead class="table-light">
-    <tr>
-      <th scope="col">Sl No</th>
-      <th scope="col">Image</th>
-      <th scope="col">Title</th>
-      <th scope="col">Category</th>
-      <th scope="col">Price</th>
-      <th scope="col">Discount</th>
-      <th scope="col">Discount Price</th>
-      <th scope="col">Status</th>
-      <th scope="col">Stock</th>
-      <th scope="col">Action</th>	
-    </tr>
-  </thead>
-  <tbody>
-    <tr th:each="p,c:${products}">
-      <th scope="row">[[${c.count}]]</th>
-      <td><img th:src="@{'/product_img/'+${p.image}}" width="60px" height="70px"></td>
-      <td>[[${p.title}]]</td>
-      <td>[[${p.category}]]</td>
-      <td>[[${p.price}]]</td>
-       <td>[[${p.discount}]]</td>
-        <td>[[${p.discountPrice}]]</td>
-          <td>[[${p.isActive}]]</td>
-      <td>[[${p.stock}]]</td>
-      <td>
-      <a th:href="@{'/admin/editProduct/'+ ${p.id}}" class="btn btn-sm btn-primary"><i class="fa-solid fa-pen-to-square"></i>Edit</a>
-      
-      <a th:href="@{'/admin/deleteProduct/'+${p.id}}" class="btn btn-sm btn-danger">
-      <i class="fa-solid fa-trash"></i>Delete</a>
-      </td>
-    </tr>
-  
-  </tbody>
-</table>
-<!-- Start Pagination -->
-					<div class="row">
-						<div class="col-md-4">Total Products : [[${totalElements}]]</div>
-						<div class="col-md-6">
-							
-								<nav aria-label="Page navigation example">
-									<ul class="pagination">
-										<li class="page-item"
-											th:classappend="${isFirst} ? 'disabled':''"><a
-											class="page-link"
-											th:href="|/admin/products?pageNo=${pageNo-1}${productsQuerySuffix}|"
-											aria-label="Previous"> <span aria-hidden="true">&laquo;</span>
-										</a></li>
-
-										<li th:each="i:${#numbers.sequence(1,totalPages)}"
-											class="page-item" th:classappend="${pageNo+1==i}?'active':''"
-											]]><a class="page-link"
-											th:href="|/admin/products?pageNo=${i-1}${productsQuerySuffix}|">[[${i}]]</a></li>
-
-										<li class="page-item"
-											th:classappend="${isLast} ? 'disabled':''"><a
-											class="page-link"
-											th:href="|/admin/products?pageNo=${pageNo+1}${productsQuerySuffix}|"
-											aria-label="Next"> <span aria-hidden="true">&raquo;</span>
-										</a></li>
-									</ul>
-								</nav>
-						</div>
-						
-					</div>
-		</div>
-		</div>
-		</div>
+				</div>
 			</div>
+
+			<!-- Products Table -->
+			<div class="card border-0 shadow-sm">
+				<div class="card-header bg-light border-0 p-4">
+					<h5 class="fw-bold mb-0">
+						<i class="fas fa-box me-2"></i>Product List
+						<span class="badge bg-primary ms-2">[[${totalElements}]]</span>
+					</h5>
+				</div>
+				<div class="table-responsive">
+					<table class="table table-hover mb-0">
+						<thead class="bg-light border-bottom fw-bold">
+							<tr>
+								<th scope="col" class="py-3">Image</th>
+								<th scope="col" class="py-3">Title</th>
+								<th scope="col" class="py-3">Category</th>
+								<th scope="col" class="py-3 text-center">Price</th>
+								<th scope="col" class="py-3 text-center">Discount</th>
+								<th scope="col" class="py-3 text-center">Status</th>
+								<th scope="col" class="py-3 text-center">Stock</th>
+								<th scope="col" class="py-3 text-end">Actions</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr th:each="p,c:${products}">
+								<td class="py-3">
+									<img th:src="@{'/product_img/'+${p.image}}" width="60px" height="60px" 
+										 style="object-fit: cover; border-radius: 6px;" th:alt="${p.title}">
+								</td>
+								<td class="py-3 fw-bold line-clamp-2">[[${p.title}]]</td>
+								<td class="py-3"><span class="badge bg-secondary">[[${p.category}]]</span></td>
+								<td class="py-3 text-center">₹[[${p.discountPrice}]]</td>
+								<td class="py-3 text-center">
+									<span class="badge bg-success" th:if="${p.discount > 0}">[[${p.discount}]]%</span>
+									<span class="text-muted" th:unless="${p.discount > 0}">-</span>
+								</td>
+								<td class="py-3 text-center">
+									<span class="badge bg-success" th:if="${p.isActive}">Active</span>
+									<span class="badge bg-secondary" th:unless="${p.isActive}">Inactive</span>
+								</td>
+								<td class="py-3 text-center">
+									<span class="badge bg-info" th:if="${p.stock > 0}">[[${p.stock}]]</span>
+									<span class="badge bg-danger" th:unless="${p.stock > 0}">Out</span>
+								</td>
+								<td class="py-3 text-end">
+									<a th:href="@{'/admin/editProduct/'+ ${p.id}}" class="btn btn-sm btn-outline-primary fw-bold me-2">
+										<i class="fas fa-edit me-1"></i>Edit
+									</a>
+									<a th:href="@{'/admin/deleteProduct/'+${p.id}}" class="btn btn-sm btn-outline-danger fw-bold">
+										<i class="fas fa-trash me-1"></i>Delete
+									</a>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+
+				<!-- Pagination -->
+				<div class="card-footer bg-light border-top p-4">
+					<div class="d-flex justify-content-between align-items-center">
+						<small class="text-muted">
+							Showing <strong>[[${#lists.size(products)}]]</strong> of <strong>[[${totalElements}]]</strong> products
+						</small>
+						<nav aria-label="Page navigation">
+							<ul class="pagination mb-0">
+								<li class="page-item" th:classappend="${isFirst} ? 'disabled':''">
+									<a class="page-link" th:href="|/admin/products?pageNo=${pageNo-1}${productsQuerySuffix}|">
+										<i class="fas fa-chevron-left me-1"></i>Previous
+									</a>
+								</li>
+
+								<li th:each="i:${#numbers.sequence(1,totalPages)}" class="page-item" 
+									th:classappend="${pageNo+1==i}?'active':''">
+									<a class="page-link" th:href="|/admin/products?pageNo=${i-1}${productsQuerySuffix}|">[[${i}]]</a>
+								</li>
+
+								<li class="page-item" th:classappend="${isLast} ? 'disabled':''">
+									<a class="page-link" th:href="|/admin/products?pageNo=${pageNo+1}${productsQuerySuffix}|">
+										Next<i class="fas fa-chevron-right ms-1"></i>
+									</a>
+								</li>
+							</ul>
+						</nav>
+					</div>
+				</div>
+			</div>
+		</div>
 	</section>
 </body>
 </html>

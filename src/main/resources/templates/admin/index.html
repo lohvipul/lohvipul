@@ -1,130 +1,240 @@
 <!DOCTYPE html>
-<html   lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="~{base::layout(~{::section})}">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="~{base::layout(~{::section})}">
 <head>
-<meta charset="UTF-8">
-<title>Insert title here</title>
+	<meta charset="UTF-8">
+	<title>Admin Dashboard - Arbuda</title>
 </head>
 <body>
 	<section>
-	<div class="container p-5 pt-5 admin-dashboard-page">
-	<div th:if="${showLoginSuccess}" id="loginSuccessAlert" class="alert alert-success text-center fade show" role="alert">Login successful.</div>
-	<th:block th:if="${showLoginSuccess}">
-	<script>
-	document.addEventListener('DOMContentLoaded', function () {
-		var el = document.getElementById('loginSuccessAlert');
-		if (!el) return;
-		setTimeout(function () {
-			el.classList.remove('show');
-			setTimeout(function () { el.remove(); }, 200);
-		}, 2500);
-	});
-	</script>
-	</th:block>
-	<div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3 mt-4">
-		<p class="text-center fs-3 mb-0 flex-grow-1">Admin Dashboard</p>
-		<small class="text-muted admin-dash-clock text-nowrap" id="adminDashClock" aria-live="polite"></small>
-	</div>
-	<div class="row g-4 px-1 pb-5">
-		<div class="col-md-4">
-			<div class="card card-sh h-100 shadow-sm position-relative admin-dash-tile">
-				<div class="card-body text-center text-primary py-4">
-					<i class="fa-solid fa-square-plus fa-3x" aria-hidden="true"></i>
-					<h4 class="mt-2 mb-0">Add Product</h4>
+		<div class="container-fluid admin-dashboard-page">
+			<div class="container py-5">
+				<!-- Success Alert -->
+				<div th:if="${showLoginSuccess}" id="loginSuccessAlert" class="alert alert-success d-flex align-items-center gap-3 mb-4 fade show" role="alert">
+					<i class="fas fa-check-circle fs-5"></i>
+					<div>
+						<strong>Welcome back!</strong> Login successful.
+					</div>
+					<button type="button" class="btn-close ms-auto" data-bs-dismiss="alert" aria-label="Close"></button>
 				</div>
-				<a th:href="@{/admin/loadAddProduct}" class="stretched-link admin-dash-tile-link" aria-label="Add Product"></a>
-			</div>
-		</div>
-		<div class="col-md-4">
-			<div class="card card-sh h-100 shadow-sm position-relative admin-dash-tile">
-				<div class="card-body text-center text-warning py-4">
-					<i class="fa-solid fa-list fa-3x" aria-hidden="true"></i>
-					<h4 class="mt-2 mb-0">Add Category</h4>
+
+				<!-- Header with Title and Clock -->
+				<div class="mb-5">
+					<div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-3">
+						<div>
+							<h1 class="display-5 fw-bold mb-2">Admin Dashboard</h1>
+							<p class="text-muted">Manage your e-commerce business efficiently</p>
+						</div>
+						<div class="text-end">
+							<small class="text-muted d-block fw-bold" id="adminDashClock" aria-live="polite">
+								<i class="fas fa-clock me-2"></i>Loading...
+							</small>
+						</div>
+					</div>
 				</div>
-				<a th:href="@{/admin/category}" class="stretched-link admin-dash-tile-link" aria-label="Add Category"></a>
-			</div>
-		</div>
-		<div class="col-md-4">
-			<div class="card card-sh h-100 shadow-sm admin-dash-tile">
-				<div class="card-body text-center text-success py-3" th:if="${stats != null}">
-					<i class="fa-solid fa-table-list fa-3x" aria-hidden="true"></i>
-					<h4 class="mt-2 mb-0">View Product</h4>
-					<div class="d-grid gap-2 mt-3 px-2">
-						<a th:href="@{/admin/products(active=true)}" class="btn btn-sm btn-success text-white position-relative admin-dash-btn-z">
-							Active <span class="badge bg-light text-success ms-1" th:text="|+${stats.activeProducts}|">+0</span>
-						</a>
-						<a th:href="@{/admin/products(active=false)}" class="btn btn-sm btn-secondary position-relative admin-dash-btn-z">
-							Inactive <span class="badge bg-light text-dark ms-1" th:text="|+${stats.inactiveProducts}|">+0</span>
-						</a>
+
+				<!-- Stats Row (if stats available) -->
+				<div th:if="${stats != null}" class="row g-4 mb-5">
+					<div class="col-md-6 col-lg-3">
+						<div class="card border-0 shadow-sm h-100">
+							<div class="card-body">
+								<div class="d-flex justify-content-between align-items-start">
+									<div>
+										<p class="text-muted small fw-bold mb-2">Active Products</p>
+										<h3 class="fw-bold text-primary mb-0" th:text="${stats.activeProducts}">0</h3>
+									</div>
+									<div class="bg-primary bg-opacity-10 p-3 rounded-3 text-primary">
+										<i class="fas fa-cube fa-lg"></i>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="col-md-6 col-lg-3">
+						<div class="card border-0 shadow-sm h-100">
+							<div class="card-body">
+								<div class="d-flex justify-content-between align-items-start">
+									<div>
+										<p class="text-muted small fw-bold mb-2">Total Customers</p>
+										<h3 class="fw-bold text-success mb-0" th:text="${stats.customerUsers}">0</h3>
+									</div>
+									<div class="bg-success bg-opacity-10 p-3 rounded-3 text-success">
+										<i class="fas fa-users fa-lg"></i>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="col-md-6 col-lg-3">
+						<div class="card border-0 shadow-sm h-100">
+							<div class="card-body">
+								<div class="d-flex justify-content-between align-items-start">
+									<div>
+										<p class="text-muted small fw-bold mb-2">Admin Users</p>
+										<h3 class="fw-bold text-warning mb-0" th:text="${stats.adminUsers}">0</h3>
+									</div>
+									<div class="bg-warning bg-opacity-10 p-3 rounded-3 text-warning">
+										<i class="fas fa-shield-alt fa-lg"></i>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="col-md-6 col-lg-3">
+						<div class="card border-0 shadow-sm h-100">
+							<div class="card-body">
+								<div class="d-flex justify-content-between align-items-start">
+									<div>
+										<p class="text-muted small fw-bold mb-2">Inactive Products</p>
+										<h3 class="fw-bold text-danger mb-0" th:text="${stats.inactiveProducts}">0</h3>
+									</div>
+									<div class="bg-danger bg-opacity-10 p-3 rounded-3 text-danger">
+										<i class="fas fa-times-circle fa-lg"></i>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<!-- Main Actions Grid -->
+				<div>
+					<h5 class="fw-bold mb-4">Quick Actions</h5>
+					<div class="row g-4 pb-5">
+						<!-- Add Product -->
+						<div class="col-md-6 col-lg-4">
+							<div class="card h-100 shadow-sm card-hover border-0 position-relative admin-dash-tile">
+								<div class="card-body text-center py-5">
+									<div class="mb-3 text-primary">
+										<i class="fas fa-square-plus fa-4x"></i>
+									</div>
+									<h5 class="card-title fw-bold">Add Product</h5>
+									<p class="text-muted small">Add new products to your catalog</p>
+								</div>
+								<a th:href="@{/admin/loadAddProduct}" class="stretched-link" aria-label="Add Product"></a>
+							</div>
+						</div>
+
+						<!-- Add Category -->
+						<div class="col-md-6 col-lg-4">
+							<div class="card h-100 shadow-sm card-hover border-0 position-relative admin-dash-tile">
+								<div class="card-body text-center py-5">
+									<div class="mb-3 text-success">
+										<i class="fas fa-list fa-4x"></i>
+									</div>
+									<h5 class="card-title fw-bold">Add Category</h5>
+									<p class="text-muted small">Create and manage product categories</p>
+								</div>
+								<a th:href="@{/admin/category}" class="stretched-link" aria-label="Add Category"></a>
+							</div>
+						</div>
+
+						<!-- View Products -->
+						<div class="col-md-6 col-lg-4">
+							<div class="card h-100 shadow-sm card-hover border-0 position-relative admin-dash-tile">
+								<div class="card-body text-center py-5">
+									<div class="mb-3 text-info">
+										<i class="fas fa-table-list fa-4x"></i>
+									</div>
+									<h5 class="card-title fw-bold">View Products</h5>
+									<p class="text-muted small">Browse and manage all products</p>
+									<div class="d-grid gap-2 mt-3">
+										<a th:href="@{/admin/products(active=true)}" class="btn btn-sm btn-primary fw-bold position-relative admin-dash-btn-z">
+											<i class="fas fa-check me-1"></i>Active
+										</a>
+										<a th:href="@{/admin/products(active=false)}" class="btn btn-sm btn-outline-secondary fw-bold position-relative admin-dash-btn-z">
+											<i class="fas fa-pause me-1"></i>Inactive
+										</a>
+									</div>
+								</div>
+							</div>
+						</div>
+
+						<!-- Orders -->
+						<div class="col-md-6 col-lg-4">
+							<div class="card h-100 shadow-sm card-hover border-0 position-relative admin-dash-tile" th:classappend="${dashOrderBigBorderClass}">
+								<div class="card-body text-center py-5 position-relative">
+									<span th:if="${dashOrderBadgeShow}" class="admin-order-badge-lg badge fs-6 px-3 py-2 text-white" 
+										th:classappend="${dashOrderBadgeRed} ? 'bg-danger admin-badge-pending-pulse' : 'bg-primary'" 
+										th:text="|${dashOrderBadgeLabel} Pending|">
+										Pending
+									</span>
+									<div class="mb-3 text-warning">
+										<i class="fas fa-box-open fa-4x"></i>
+									</div>
+									<h5 class="card-title fw-bold">Orders</h5>
+									<p class="text-muted small">Review and process customer orders</p>
+								</div>
+								<a th:href="@{/admin/orders}" class="stretched-link" aria-label="Orders"></a>
+							</div>
+						</div>
+
+						<!-- Users -->
+						<div class="col-md-6 col-lg-4">
+							<div class="card h-100 shadow-sm card-hover border-0 position-relative admin-dash-tile">
+								<div class="card-body text-center py-5">
+									<div class="mb-3 text-primary">
+										<i class="fas fa-circle-user fa-4x"></i>
+									</div>
+									<h5 class="card-title fw-bold">Manage Users</h5>
+									<p class="text-muted small">View and manage customer accounts</p>
+									<div class="d-grid gap-2 mt-3">
+										<a th:href="@{/admin/users?type=1}" class="btn btn-sm btn-primary fw-bold position-relative admin-dash-btn-z">
+											<i class="fas fa-users me-1"></i>Customers
+										</a>
+									</div>
+								</div>
+							</div>
+						</div>
+
+						<!-- Add Admin -->
+						<div class="col-md-6 col-lg-4">
+							<div class="card h-100 shadow-sm card-hover border-0 position-relative admin-dash-tile">
+								<div class="card-body text-center py-5">
+									<div class="mb-3 text-danger">
+										<i class="fas fa-user-shield fa-4x"></i>
+									</div>
+									<h5 class="card-title fw-bold">Add Admin</h5>
+									<p class="text-muted small">Create admin user accounts</p>
+									<div class="d-grid gap-2 mt-3">
+										<a th:href="@{/admin/add-admin}" class="btn btn-sm btn-danger fw-bold position-relative admin-dash-btn-z">
+											<i class="fas fa-user-plus me-1"></i>Add Admin
+										</a>
+									</div>
+								</div>
+							</div>
+						</div>
 					</div>
 				</div>
 			</div>
 		</div>
-		<div class="col-md-4">
-			<div class="card card-sh h-100 shadow-sm position-relative admin-dash-tile"
-				th:classappend="${dashOrderBigBorderClass}">
-				<div class="card-body text-center text-warning py-4 position-relative">
-					<span th:if="${dashOrderBadgeShow}"
-						class="admin-order-badge-lg badge rounded-pill fs-6 px-2 py-1 text-white"
-						th:classappend="${dashOrderBadgeRed} ? 'bg-danger admin-badge-pending-pulse' : 'bg-primary'"
-						th:text="|+${dashOrderBadgeLabel}|">+2</span>
-					<i class="fa-solid fa-box-open fa-3x" aria-hidden="true"></i>
-					<h4 class="mt-2 mb-0">Orders</h4>
-				</div>
-				<a th:href="@{/admin/orders}" class="stretched-link admin-dash-tile-link" aria-label="Orders"></a>
-			</div>
-		</div>
-		<div class="col-md-4">
-			<div class="card card-sh h-100 shadow-sm admin-dash-tile">
-				<div class="card-body text-center text-primary py-3" th:if="${stats != null}">
-					<i class="fa-solid fa-circle-user fa-3x" aria-hidden="true"></i>
-					<h4 class="mt-2 mb-0">Users</h4>
-					<div class="d-grid gap-2 mt-3 px-2">
-						<a th:href="@{'/admin/users?type=1'}" class="btn btn-sm btn-primary text-white position-relative admin-dash-btn-z">
-							Customers <span class="badge bg-light text-primary ms-1" th:text="|+${stats.customerUsers}|">+0</span>
-						</a>
-					</div>
-				</div>
-			</div>
-		</div>
-		<div class="col-md-4">
-			<div class="card card-sh h-100 shadow-sm position-relative admin-dash-tile">
-				<div class="card-body text-center text-primary py-4">
-					<i class="fa-solid fa-user-plus fa-3x" aria-hidden="true"></i>
-					<h4 class="mt-2 mb-0">Add Admin</h4>
-				</div>
-				<a th:href="@{/admin/add-admin}" class="stretched-link admin-dash-tile-link" aria-label="Add Admin"></a>
-			</div>
-		</div>
-		<div class="col-md-4">
-			<div class="card card-sh h-100 shadow-sm admin-dash-tile">
-				<div class="card-body text-center text-danger py-3" th:if="${stats != null}">
-					<i class="fa-solid fa-circle-user fa-3x" aria-hidden="true"></i>
-					<h4 class="mt-2 mb-0">Admin</h4>
-					<div class="d-grid gap-2 mt-3 px-2">
-						<a th:href="@{'/admin/users?type=2'}" class="btn btn-sm btn-danger text-white position-relative admin-dash-btn-z">
-							Admins <span class="badge bg-light text-danger ms-1" th:text="|+${stats.adminUsers}|">+0</span>
-						</a>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-	</div>
-	<script>
-	(function () {
-		function tick() {
-			var el = document.getElementById('adminDashClock');
-			if (!el) return;
-			var d = new Date();
-			el.textContent = d.toLocaleString(undefined, {
-				weekday: 'short', year: 'numeric', month: 'short', day: 'numeric',
-				hour: '2-digit', minute: '2-digit', second: '2-digit'
+
+		<!-- Clock Script -->
+		<script>
+			(function () {
+				function tick() {
+					var el = document.getElementById('adminDashClock');
+					if (!el) return;
+					var d = new Date();
+					el.innerHTML = '<i class="fas fa-clock me-2"></i>' + d.toLocaleString(undefined, {
+						weekday: 'short', year: 'numeric', month: 'short', day: 'numeric',
+						hour: '2-digit', minute: '2-digit', second: '2-digit'
+					});
+				}
+				tick();
+				setInterval(tick, 1000);
+			})();
+
+			// Auto-hide success alert after 3 seconds
+			document.addEventListener('DOMContentLoaded', function () {
+				var el = document.getElementById('loginSuccessAlert');
+				if (el) {
+					setTimeout(function () {
+						el.classList.remove('show');
+						setTimeout(function () { el.remove(); }, 200);
+					}, 3000);
+				}
 			});
-		}
-		tick();
-		setInterval(tick, 1000);
-	})();
-	</script>
+		</script>
 	</section>
 </body>
 </html>
